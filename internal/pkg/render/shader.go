@@ -16,17 +16,22 @@ func NewShaderFromFile(file string, sType uint32) (*Shader, error) {
 	if err != nil {
 		return nil, err
 	}
+	return NewShaderFromString(string(src), sType)
+}
+
+func NewShaderFromString(src string, sType uint32) (*Shader, error) {
 	handle := gl.CreateShader(sType)
-	glSrc, freeFn := gl.Strs(string(src) + "\x00")
+	glSrc, freeFn := gl.Strs(src + "\x00")
 	defer freeFn()
 	gl.ShaderSource(handle, 1, glSrc, nil)
 	gl.CompileShader(handle)
-	err = getGlError(handle, gl.COMPILE_STATUS, gl.GetShaderiv, gl.GetShaderInfoLog,
-		"SHADER::COMPILE_FAILURE::"+file)
+	err := getGlError(handle, gl.COMPILE_STATUS, gl.GetShaderiv, gl.GetShaderInfoLog,
+		"SHADER::COMPILE_FAILURE::")
 	if err != nil {
 		return nil, err
 	}
 	return &Shader{Handle: handle, Type: sType}, nil
+
 }
 
 type Program struct {

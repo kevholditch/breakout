@@ -14,3 +14,7 @@ vet:
 
 .PHONY: check
 check: vet
+
+.PHONY: fmt
+fmt:
+	@go fmt ./...
