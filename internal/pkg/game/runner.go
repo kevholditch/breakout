@@ -3,6 +3,7 @@ package game
 import (
 	"fmt"
 	"github.com/go-gl/gl/v2.1/gl"
+	"github.com/go-gl/glfw/v3.3/glfw"
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/kevholditch/breakout/internal/pkg/render"
 	"runtime"
@@ -41,27 +42,17 @@ func Run() error {
 	indices := []int32{
 		0, 1, 2,
 		0, 3, 2,
-		4, 5, 6,
-		4, 7, 6,
-	}
-
-	buffer := []float32{
-		200, 200, 0.4, 0.3, 0.2, 1.0,
-		500, 200, 0.4, 0.3, 0.2, 1.0,
-		500, 500, 0.4, 0.3, 0.2, 1.0,
-		200, 500, 0.4, 0.3, 0.2, 1.0,
-		600, 200, 0.8, 0.2, 0.2, 1.0,
-		900, 200, 0.2, 0.8, 0.2, 1.0,
-		900, 500, 0.8, 0.2, 0.2, 1.0,
-		600, 500, 0.2, 0.8, 0.2, 1.0,
 	}
 
 	va := render.NewVertexArray()
 	ib := render.NewIndexBuffer(indices)
 
+	box := render.NewQuad(200, 200, 300, 300, 0.7, 0.8, 0.2, 1.0)
+
 	proj := mgl32.Ortho(0, width, 0, height, -1.0, 1.0)
 
-	va.AddBuffer(render.NewVertexBuffer(buffer), render.NewVertexBufferLayout().AddLayoutFloats(2).AddLayoutFloats(4))
+	vertexBuffer := render.NewVertexBuffer(box.ToBuffer())
+	va.AddBuffer(vertexBuffer, render.NewVertexBufferLayout().AddLayoutFloats(2).AddLayoutFloats(4))
 
 	vertex := `#version 410 core
 
@@ -104,15 +95,58 @@ void main()
 
 	program.SetUniformMat4f("u_MVP", proj)
 
-	va.UnBind()
-	ib.UnBind()
-	program.UnBind()
+	previousTime := glfw.GetTime()
+	frameCount := 0
+
+	inc := float32(25.0)
+	holdInc := float32(50.0)
+
+	m := mgl32.Ident4().Mul4(mgl32.Translate3D(0, 0, 0))
+
+	w.OnKeyPress(func(key int) {
+		switch key {
+		case 263:
+			box.Move(-inc, 0)
+		case 262:
+			box.Move(inc, 0)
+		case 265:
+			box.Move(0, inc)
+		case 264:
+			box.Move(0, -inc)
+		}
+	}, func(key int) {
+		switch key {
+		case 263:
+			box.Move(-holdInc, 0)
+		case 262:
+			box.Move(holdInc, 0)
+		case 265:
+			box.Move(0, holdInc)
+		case 264:
+			box.Move(0, -holdInc)
+		}
+	})
 
 	for !w.ShouldClose() {
+
+		currentTime := glfw.GetTime()
+		frameCount++
+
+		vertexBuffer.Update(box.ToBuffer())
+
+		if currentTime-previousTime >= 1 {
+			fmt.Printf("FPS: %d\n", frameCount)
+
+			frameCount = 0
+			previousTime = currentTime
+		}
+
 		render.Clear()
 
 		program.Bind()
-		program.SetUniformMat4f("u_MVP", proj)
+
+		mvp := proj.Mul4(m)
+		program.SetUniformMat4f("u_MVP", mvp)
 
 		render.Render(va, ib, program)
 

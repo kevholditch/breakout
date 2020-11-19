@@ -18,7 +18,7 @@ func NewIndexBuffer(indices []int32) *IndexBuffer {
 	var ibo uint32
 	gl.GenBuffers(1, &ibo)
 	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo)
-	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(indices)*sizeOfInt32, gl.Ptr(indices), gl.STATIC_DRAW)
+	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(indices)*sizeOfInt32, gl.Ptr(indices), gl.DYNAMIC_DRAW)
 
 	return &IndexBuffer{handle: ibo, count: int32(len(indices))}
 }

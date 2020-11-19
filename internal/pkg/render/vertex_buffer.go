@@ -12,10 +12,16 @@ func NewVertexBuffer(values []float32) *VertexBuffer {
 
 	var buffer uint32
 	gl.GenBuffers(1, &buffer)
+
 	gl.BindBuffer(gl.ARRAY_BUFFER, buffer)
-	gl.BufferData(gl.ARRAY_BUFFER, len(values)*sizeOfFloat32, gl.Ptr(values), gl.STATIC_DRAW)
+	gl.BufferData(gl.ARRAY_BUFFER, len(values)*sizeOfFloat32, gl.Ptr(values), gl.DYNAMIC_DRAW)
 
 	return &VertexBuffer{handle: buffer}
+}
+
+func (v *VertexBuffer) Update(values []float32) {
+	v.Bind()
+	gl.BufferData(gl.ARRAY_BUFFER, len(values)*sizeOfFloat32, gl.Ptr(values), gl.DYNAMIC_DRAW)
 }
 
 func (v *VertexBuffer) Bind() {
