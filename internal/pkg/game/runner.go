@@ -7,6 +7,7 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/kevholditch/breakout/internal/pkg/render"
 	"runtime"
+	"time"
 )
 
 const (
@@ -47,7 +48,7 @@ func Run() error {
 	va := render.NewVertexArray()
 	ib := render.NewIndexBuffer(indices)
 
-	box := render.NewQuad(200, 200, 300, 300, 0.7, 0.8, 0.2, 1.0)
+	box := render.NewQuad(200, 50, 300, 50, 0.7, 0.8, 0.2, 1.0)
 
 	proj := mgl32.Ortho(0, width, 0, height, -1.0, 1.0)
 
@@ -98,44 +99,64 @@ void main()
 	previousTime := glfw.GetTime()
 	frameCount := 0
 
-	inc := float32(25.0)
-	holdInc := float32(50.0)
+	speed := float32(0)
+	inc := float32(1)
+	smallInc := float32(0.5)
 
 	m := mgl32.Ident4().Mul4(mgl32.Translate3D(0, 0, 0))
 
 	w.OnKeyPress(func(key int) {
 		switch key {
 		case 263:
-			box.Move(-inc, 0)
+			if speed > 0 {
+				speed = 0
+			} else {
+				speed -= inc
+			}
 		case 262:
-			box.Move(inc, 0)
-		case 265:
-			box.Move(0, inc)
-		case 264:
-			box.Move(0, -inc)
+			if speed < 0 {
+				speed = 0
+			} else {
+				speed += inc
+			}
+			//case 265:
+			//	box.Move(0, inc)
+			//case 264:
+			//	box.Move(0, -inc)
 		}
 	}, func(key int) {
 		switch key {
 		case 263:
-			box.Move(-holdInc, 0)
+			if speed > 0 {
+				speed = 0
+			} else {
+				speed -= smallInc
+			}
 		case 262:
-			box.Move(holdInc, 0)
-		case 265:
-			box.Move(0, holdInc)
-		case 264:
-			box.Move(0, -holdInc)
+			if speed < 0 {
+				speed = 0
+			} else {
+				speed += smallInc
+			}
+			//case 265:
+			//	box.Move(0, holdInc)
+			//case 264:
+			//	box.Move(0, -holdInc)
 		}
 	})
 
+	last := time.Now()
+
 	for !w.ShouldClose() {
+		elapsed := time.Now().Sub(last)
+		last = time.Now()
 
 		currentTime := glfw.GetTime()
 		frameCount++
 
-		vertexBuffer.Update(box.ToBuffer())
+		vertexBuffer.Update(box.Move(float32(elapsed.Milliseconds())*speed, 0).ToBuffer())
 
 		if currentTime-previousTime >= 1 {
-			fmt.Printf("FPS: %d\n", frameCount)
 
 			frameCount = 0
 			previousTime = currentTime
@@ -152,6 +173,7 @@ void main()
 
 		w.SwapBuffers()
 		w.PollEvents()
+
 	}
 
 	return nil
