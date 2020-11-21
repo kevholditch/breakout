@@ -2,10 +2,12 @@ package game
 
 import (
 	"fmt"
+	"github.com/EngoEngine/ecs"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/kevholditch/breakout/internal/pkg/render"
+	"github.com/kevholditch/breakout/internal/pkg/systems"
 	"runtime"
 	"time"
 )
@@ -105,6 +107,9 @@ void main()
 
 	m := mgl32.Ident4().Mul4(mgl32.Translate3D(0, 0, 0))
 
+	world := ecs.World{}
+	world.AddSystem(systems.NewFrameRateSystem())
+
 	w.OnKeyPress(func(key int) {
 		switch key {
 		case 263:
@@ -148,8 +153,13 @@ void main()
 	last := time.Now()
 
 	for !w.ShouldClose() {
+
+		// 100 ms elasped
+		// 0.1
+
 		elapsed := time.Now().Sub(last)
 		last = time.Now()
+		world.Update(float32(elapsed.Milliseconds()) / float32(1000))
 
 		currentTime := glfw.GetTime()
 		frameCount++
