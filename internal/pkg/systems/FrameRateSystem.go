@@ -35,6 +35,4 @@ func (f *FrameRateSystem) Update(dt float32) {
 
 }
 
-func (f *FrameRateSystem) Remove(e ecs.BasicEntity) {
-
-}
+func (f *FrameRateSystem) Remove(_ ecs.BasicEntity) {}

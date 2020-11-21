@@ -50,7 +50,7 @@ func Run() error {
 	va := render.NewVertexArray()
 	ib := render.NewIndexBuffer(indices)
 
-	box := render.NewQuad(200, 50, 300, 50, 0.7, 0.8, 0.2, 1.0)
+	box := render.NewQuad(200, 40, 200, 30, 0.7, 0.8, 0.2, 1.0)
 
 	proj := mgl32.Ortho(0, width, 0, height, -1.0, 1.0)
 
