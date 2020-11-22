@@ -38,8 +38,6 @@ func Run() error {
 		return err
 	}
 
-	inc := float32(1000)
-
 	world := ecs.World{}
 	world.AddSystem(NewFrameRateSystem())
 
@@ -53,40 +51,17 @@ func Run() error {
 	}
 	world.AddSystem(renderSystem)
 	world.AddSystem(NewMovementSystem().Add(player.BasicEntity, player.MoveComponent))
-
-	w.OnKeyPress(func(key int) {
-		switch key {
-		case 263:
-			if player.MoveComponent.Speed > 0 {
-				player.MoveComponent.Speed = 0
-			} else {
-				player.MoveComponent.Speed -= inc
-			}
-		case 262:
-			if player.MoveComponent.Speed < 0 {
-				player.MoveComponent.Speed = 0
-			} else {
-				player.MoveComponent.Speed += inc
-			}
-		}
-	}, func(key int) {
-
-	})
+	world.AddSystem(NewPlayerInputSystem(player, w.OnKeyPress))
 
 	last := time.Now()
 
 	for !w.ShouldClose() {
-
-		// 100 ms elasped
-		// 0.1
-
 		elapsed := time.Now().Sub(last)
 		last = time.Now()
 		world.Update(float32(elapsed.Milliseconds()) / float32(1000))
 
 		w.SwapBuffers()
 		w.PollEvents()
-
 	}
 
 	return nil
