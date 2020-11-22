@@ -50,7 +50,7 @@ func Run() error {
 		return err
 	}
 	world.AddSystem(renderSystem)
-	world.AddSystem(NewMovementSystem().Add(player.BasicEntity, player.MoveComponent))
+	world.AddSystem(NewMovementSystem(width, height).Add(player.BasicEntity, player.MoveComponent))
 	world.AddSystem(NewPlayerInputSystem(player, w.OnKeyPress))
 
 	last := time.Now()

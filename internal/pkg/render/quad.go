@@ -21,13 +21,8 @@ func NewQuad(x, y, w, h, r, g, b, a float32) *Quad {
 	}
 }
 
-func (q *Quad) Move(x, y float32) *Quad {
-	q.Position[0] += x
-	q.Position[1] += y
-	q.Position[2] += x
-	q.Position[3] += y
-
-	return q
+func (q *Quad) Width() float32 {
+	return q.Position.Z() - q.Position.X()
 }
 
 func (q *Quad) ToBuffer() []float32 {

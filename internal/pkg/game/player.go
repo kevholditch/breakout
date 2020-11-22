@@ -18,7 +18,7 @@ func NewPlayer() *PlayerEntity {
 	return &PlayerEntity{
 		BasicEntity:     ecs.NewBasic(),
 		RenderComponent: NewRenderComponent(playerQuad),
-		MoveComponent:   NewMoveComponent(playerQuad),
+		MoveComponent:   NewMoveComponent(playerQuad, 0.0),
 	}
 
 }

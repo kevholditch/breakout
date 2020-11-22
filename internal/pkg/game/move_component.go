@@ -7,6 +7,6 @@ type MoveComponent struct {
 	Speed float32
 }
 
-func NewMoveComponent(q *render.Quad) *MoveComponent {
-	return &MoveComponent{Quad: q, Speed: 0.0}
+func NewMoveComponent(q *render.Quad, speed float32) *MoveComponent {
+	return &MoveComponent{Quad: q, Speed: speed}
 }
