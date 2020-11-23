@@ -39,19 +39,12 @@ func Run() error {
 	}
 
 	world := ecs.World{}
-	world.AddSystem(NewFrameRateSystem())
-
 	player := NewPlayer()
-	renderSystem := NewRenderSystem(width, height).
-		Add(player.BasicEntity, player.RenderComponent)
 
-	err = renderSystem.Initialise()
-	if err != nil {
-		return err
-	}
-	world.AddSystem(renderSystem)
-	world.AddSystem(NewMovementSystem(width, height).Add(player.BasicEntity, player.MoveComponent))
-	world.AddSystem(NewPlayerInputSystem(player, w.OnKeyPress))
+	world.AddSystem(NewFrameRateSystem())
+	world.AddSystem(NewRenderSystem(width, height).Add(player.BasicEntity, player.RenderComponent))
+	world.AddSystem(NewPlayerMovementSystem(width, height).Add(&player.BasicEntity, player.MoveComponent))
+	world.AddSystem(NewPlayerInputSystem(w.OnKeyPress).Add(&player.BasicEntity, player.MoveComponent))
 
 	last := time.Now()
 

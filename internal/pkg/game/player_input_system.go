@@ -3,36 +3,57 @@ package game
 import "github.com/EngoEngine/ecs"
 
 type PlayerInputSystem struct {
-	PlayerEntity *PlayerEntity
+	entities map[uint64]struct {
+		*ecs.BasicEntity
+		moveComponent *MoveComponent
+		increment     float32
+	}
+	subscribe func(func(int), func(int))
 }
 
-func NewPlayerInputSystem(player *PlayerEntity, subscribe func(func(int), func(int))) *PlayerInputSystem {
-	p := &PlayerInputSystem{
-		PlayerEntity: player,
+func NewPlayerInputSystem(subscribe func(func(int), func(int))) *PlayerInputSystem {
+
+	return &PlayerInputSystem{
+		entities: map[uint64]struct {
+			*ecs.BasicEntity
+			moveComponent *MoveComponent
+			increment     float32
+		}{},
+		subscribe: subscribe,
 	}
 
-	inc := float32(1)
+}
 
-	subscribe(func(key int) {
+func (m *PlayerInputSystem) Add(entity *ecs.BasicEntity, moveComponent *MoveComponent) *PlayerInputSystem {
+
+	m.entities[entity.ID()] = struct {
+		*ecs.BasicEntity
+		moveComponent *MoveComponent
+		increment     float32
+	}{
+		entity, moveComponent, 1.0,
+	}
+
+	m.subscribe(func(key int) {
 		switch key {
 		case 263:
-			if player.MoveComponent.Speed > 0 {
-				player.MoveComponent.Speed = 0
+			if moveComponent.Speed > 0 {
+				moveComponent.Speed = 0
 			} else {
-				player.MoveComponent.Speed -= inc
+				moveComponent.Speed -= 1.0
 			}
 		case 262:
-			if player.MoveComponent.Speed < 0 {
-				player.MoveComponent.Speed = 0
+			if moveComponent.Speed < 0 {
+				moveComponent.Speed = 0
 			} else {
-				player.MoveComponent.Speed += inc
+				moveComponent.Speed += 1.0
 			}
 		}
 	}, func(key int) {
 
 	})
 
-	return p
+	return m
 }
 
 func (m *PlayerInputSystem) Update(dt float32) {}

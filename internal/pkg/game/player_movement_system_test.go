@@ -13,7 +13,7 @@ type testMoveEntity struct {
 	moveComponent *MoveComponent
 }
 
-func Test_MovementSystem(t *testing.T) {
+func Test_PlayerMovementSystem(t *testing.T) {
 
 	testCases := []struct {
 		name             string
@@ -69,7 +69,7 @@ func Test_MovementSystem(t *testing.T) {
 	}
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			system := NewMovementSystem(800, 600)
+			system := NewPlayerMovementSystem(800, 600)
 			system.Add(testCase.testEntity.BasicEntity, testCase.testEntity.moveComponent)
 			system.Update(1)
 

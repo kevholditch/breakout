@@ -31,7 +31,14 @@ func NewRenderSystem(width, height float32) *RenderSystem {
 	}
 }
 
-func (r *RenderSystem) Initialise() error {
+func (r *RenderSystem) New(world *ecs.World) {
+	err := r.initialise()
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (r *RenderSystem) initialise() error {
 	var rc *RenderComponent
 	for _, v := range r.entities {
 		rc = v.component
