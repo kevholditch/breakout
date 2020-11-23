@@ -42,13 +42,13 @@ func (r *RenderSystem) initialise() error {
 
 	render.UseDefaultBlending()
 
-	r.vertexArray = render.NewVertexArray()
-	r.indexBuffer = render.NewIndexBuffer(r.generateIndexBuffer())
-
-	r.projectionMatrix = mgl32.Ortho(0, r.width, 0, r.height, -1.0, 1.0)
-
-	r.vertexBuffer = render.NewVertexBuffer(r.generateVertexBuffer())
-	r.vertexArray.AddBuffer(r.vertexBuffer, render.NewVertexBufferLayout().AddLayoutFloats(2).AddLayoutFloats(4))
+	//r.vertexArray = render.NewVertexArray()
+	//r.indexBuffer = render.NewIndexBuffer(r.generateIndexBuffer())
+	//
+	//r.projectionMatrix = mgl32.Ortho(0, r.width, 0, r.height, -1.0, 1.0)
+	//
+	//r.vertexBuffer = render.NewVertexBuffer(r.generateVertexBuffer())
+	//r.vertexArray.AddBuffer(r.vertexBuffer, render.NewVertexBufferLayout().AddLayoutFloats(2).AddLayoutFloats(4))
 
 	vertex := `#version 410 core
 
@@ -95,7 +95,7 @@ void main()
 }
 
 func (r *RenderSystem) generateIndexBuffer() []int32 {
-	result := make([]int32, 6*len(r.entities))
+	var result []int32
 
 	for i := int32(0); i < int32(len(r.entities)); i++ {
 		result = append(result, i*4)
@@ -110,7 +110,7 @@ func (r *RenderSystem) generateIndexBuffer() []int32 {
 }
 
 func (r *RenderSystem) generateVertexBuffer() []float32 {
-	result := make([]float32, render.QuadBufferSize*len(r.entities))
+	var result []float32
 
 	for _, e := range r.entities {
 		result = append(result, e.renderComponent.Quad.ToBuffer()...)
@@ -120,17 +120,19 @@ func (r *RenderSystem) generateVertexBuffer() []float32 {
 }
 
 func (r *RenderSystem) Update(float32) {
-	r.indexBuffer.Update(r.generateIndexBuffer())
-	for _, e := range r.entities {
-		r.vertexBuffer.Update(e.renderComponent.Quad.ToBuffer())
-	}
+
+	r.vertexArray = render.NewVertexArray()
+	r.indexBuffer = render.NewIndexBuffer(r.generateIndexBuffer())
+
+	r.projectionMatrix = mgl32.Ortho(0, r.width, 0, r.height, -1.0, 1.0)
+
+	r.vertexBuffer = render.NewVertexBuffer(r.generateVertexBuffer())
+	r.vertexArray.AddBuffer(r.vertexBuffer, render.NewVertexBufferLayout().AddLayoutFloats(2).AddLayoutFloats(4))
 
 	render.Clear()
 
 	r.program.Bind()
-	m := mgl32.Ident4().Mul4(mgl32.Translate3D(0, 0, 0))
-	mvp := r.projectionMatrix.Mul4(m)
-	r.program.SetUniformMat4f("u_MVP", mvp)
+	r.program.SetUniformMat4f("u_MVP", r.projectionMatrix)
 
 	render.Render(r.vertexArray, r.indexBuffer, r.program)
 }

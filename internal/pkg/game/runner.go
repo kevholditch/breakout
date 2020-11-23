@@ -48,7 +48,7 @@ func Run() error {
 	world.AddSystem(renderSystem)
 	world.AddSystem(NewPlayerMovementSystem(playingSpace).Add(&player.BasicEntity, player.MoveComponent))
 	world.AddSystem(NewPlayerInputSystem(w.OnKeyPress).Add(&player.BasicEntity, player.MoveComponent))
-	//world.AddSystem(NewLevelSystem(playingSpace))
+	world.AddSystem(NewLevelSystem(playingSpace))
 
 	last := time.Now()
 
