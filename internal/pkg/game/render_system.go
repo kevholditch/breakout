@@ -8,9 +8,12 @@ import (
 )
 
 type RenderSystem struct {
-	width            float32
-	height           float32
-	entities         map[uint64]holder
+	width    float32
+	height   float32
+	entities map[uint64]struct {
+		*ecs.BasicEntity
+		renderComponent *RenderComponent
+	}
 	program          *render.Program
 	indexBuffer      *render.IndexBuffer
 	vertexArray      *render.VertexArray
@@ -25,9 +28,12 @@ type holder struct {
 
 func NewRenderSystem(width, height float32) *RenderSystem {
 	return &RenderSystem{
-		entities: map[uint64]holder{},
-		width:    width,
-		height:   height,
+		entities: map[uint64]struct {
+			*ecs.BasicEntity
+			renderComponent *RenderComponent
+		}{},
+		width:  width,
+		height: height,
 	}
 }
 
@@ -41,7 +47,7 @@ func (r *RenderSystem) New(world *ecs.World) {
 func (r *RenderSystem) initialise() error {
 	var rc *RenderComponent
 	for _, v := range r.entities {
-		rc = v.component
+		rc = v.renderComponent
 		break
 	}
 
@@ -106,7 +112,7 @@ void main()
 
 func (r *RenderSystem) Update(dt float32) {
 	for _, e := range r.entities {
-		r.vertexBuffer.Update(e.component.Quad.ToBuffer())
+		r.vertexBuffer.Update(e.renderComponent.Quad.ToBuffer())
 	}
 
 	render.Clear()
@@ -119,10 +125,12 @@ func (r *RenderSystem) Update(dt float32) {
 	render.Render(r.vertexArray, r.indexBuffer, r.program)
 }
 
-func (r *RenderSystem) Add(entity ecs.BasicEntity, renderComponent *RenderComponent) *RenderSystem {
-	r.entities[entity.ID()] = holder{
-		entity:    entity,
-		component: renderComponent,
+func (r *RenderSystem) Add(entity *ecs.BasicEntity, renderComponent *RenderComponent) *RenderSystem {
+	r.entities[entity.ID()] = struct {
+		*ecs.BasicEntity
+		renderComponent *RenderComponent
+	}{
+		entity, renderComponent,
 	}
 	return r
 }

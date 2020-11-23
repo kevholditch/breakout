@@ -13,7 +13,7 @@ type PlayerEntity struct {
 
 func NewPlayer() *PlayerEntity {
 
-	playerQuad := render.NewQuad(200, 40, 200, 30, 0.7, 0.8, 0.2, 1.0)
+	playerQuad := render.NewQuad(200, 20, 200, 30, 0.7, 0.8, 0.2, 1.0)
 
 	return &PlayerEntity{
 		BasicEntity:     ecs.NewBasic(),
