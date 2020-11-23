@@ -24,11 +24,11 @@ func (f *FrameRateSystem) Reset() {
 }
 
 func (f *FrameRateSystem) Update(dt float32) {
-	f.sum += 1 / dt
+	f.sum += dt
 	f.count++
 
 	if f.count == f.syncEveryXUpdates {
-		f.FrameRate = f.sum / float32(f.syncEveryXUpdates)
+		f.FrameRate = 1000 / (f.sum / float32(f.syncEveryXUpdates))
 		fmt.Printf("framerate is: %.1f\n", f.FrameRate)
 		f.Reset()
 	}

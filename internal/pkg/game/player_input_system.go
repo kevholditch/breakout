@@ -11,7 +11,7 @@ func NewPlayerInputSystem(player *PlayerEntity, subscribe func(func(int), func(i
 		PlayerEntity: player,
 	}
 
-	inc := float32(1000)
+	inc := float32(1)
 
 	subscribe(func(key int) {
 		switch key {

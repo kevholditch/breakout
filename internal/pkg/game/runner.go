@@ -58,7 +58,7 @@ func Run() error {
 	for !w.ShouldClose() {
 		elapsed := time.Now().Sub(last)
 		last = time.Now()
-		world.Update(float32(elapsed.Milliseconds()) / float32(1000))
+		world.Update(float32(elapsed.Milliseconds()))
 
 		w.SwapBuffers()
 		w.PollEvents()
