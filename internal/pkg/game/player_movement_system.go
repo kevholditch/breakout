@@ -11,11 +11,11 @@ type PlayerMovementSystem struct {
 	}
 }
 
-func NewPlayerMovementSystem(width, height float32) *PlayerMovementSystem {
+func NewPlayerMovementSystem(space PlayingSpace) *PlayerMovementSystem {
 
 	m := &PlayerMovementSystem{
-		width:  width,
-		height: height,
+		width:  space.Width,
+		height: space.Height,
 		entities: map[uint64]struct {
 			*ecs.BasicEntity
 			moveComponent *MoveComponent

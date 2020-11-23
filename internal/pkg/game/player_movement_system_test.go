@@ -69,8 +69,8 @@ func Test_PlayerMovementSystem(t *testing.T) {
 	}
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			system := NewPlayerMovementSystem(800, 600)
-			system.Add(testCase.testEntity.BasicEntity, testCase.testEntity.moveComponent)
+			system := NewPlayerMovementSystem(NewPlayingSpace(800, 600))
+			system.Add(&testCase.testEntity.BasicEntity, testCase.testEntity.moveComponent)
 			system.Update(1)
 
 			assert.Equal(t, testCase.expectedPosition, testCase.testEntity.moveComponent.Quad.Position)

@@ -41,10 +41,14 @@ func Run() error {
 	world := ecs.World{}
 	player := NewPlayer()
 
+	playingSpace := NewPlayingSpace(width, height)
 	world.AddSystem(NewFrameRateSystem())
-	world.AddSystem(NewRenderSystem(width, height).Add(&player.BasicEntity, player.RenderComponent))
-	world.AddSystem(NewPlayerMovementSystem(width, height).Add(&player.BasicEntity, player.MoveComponent))
+	renderSystem := NewRenderSystem(NewWindowSize(width, height))
+	renderSystem.Add(&player.BasicEntity, player.RenderComponent)
+	world.AddSystem(renderSystem)
+	world.AddSystem(NewPlayerMovementSystem(playingSpace).Add(&player.BasicEntity, player.MoveComponent))
 	world.AddSystem(NewPlayerInputSystem(w.OnKeyPress).Add(&player.BasicEntity, player.MoveComponent))
+	//world.AddSystem(NewLevelSystem(playingSpace))
 
 	last := time.Now()
 

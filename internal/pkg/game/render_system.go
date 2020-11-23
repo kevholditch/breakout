@@ -23,11 +23,11 @@ type renderEntityHolder struct {
 	renderComponent *RenderComponent
 }
 
-func NewRenderSystem(width, height float32) *RenderSystem {
+func NewRenderSystem(windowSize WindowSize) *RenderSystem {
 	return &RenderSystem{
 		entities: []renderEntityHolder{},
-		width:    width,
-		height:   height,
+		width:    windowSize.Width,
+		height:   windowSize.Height,
 	}
 }
 
@@ -135,11 +135,10 @@ func (r *RenderSystem) Update(float32) {
 	render.Render(r.vertexArray, r.indexBuffer, r.program)
 }
 
-func (r *RenderSystem) Add(entity *ecs.BasicEntity, renderComponent *RenderComponent) *RenderSystem {
+func (r *RenderSystem) Add(entity *ecs.BasicEntity, renderComponent *RenderComponent) {
 	r.entities = append(r.entities, renderEntityHolder{
 		entity: entity, renderComponent: renderComponent,
 	})
-	return r
 }
 
 func (r *RenderSystem) Remove(basic ecs.BasicEntity) {
