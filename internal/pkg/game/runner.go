@@ -45,6 +45,7 @@ func Run() error {
 	world.AddSystem(NewFrameRateSystem())
 	renderSystem := NewRenderSystem(NewWindowSize(width, height))
 	renderSystem.Add(&player.BasicEntity, player.RenderComponent)
+
 	world.AddSystem(renderSystem)
 	world.AddSystem(NewPlayerMovementSystem(playingSpace).Add(&player.BasicEntity, player.MoveComponent))
 	world.AddSystem(NewPlayerInputSystem(w.OnKeyPress).Add(&player.BasicEntity, player.MoveComponent))
