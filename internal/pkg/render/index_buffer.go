@@ -23,6 +23,11 @@ func NewIndexBuffer(indices []int32) *IndexBuffer {
 	return &IndexBuffer{handle: ibo, count: int32(len(indices))}
 }
 
+func (ib *IndexBuffer) Update(indices []int32) {
+	ib.Bind()
+	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(indices)*sizeOfInt32, gl.Ptr(indices), gl.DYNAMIC_DRAW)
+}
+
 func (ib *IndexBuffer) GetCount() int32 {
 	return ib.count
 }

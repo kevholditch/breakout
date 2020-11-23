@@ -8,12 +8,9 @@ import (
 )
 
 type RenderSystem struct {
-	width    float32
-	height   float32
-	entities map[uint64]struct {
-		*ecs.BasicEntity
-		renderComponent *RenderComponent
-	}
+	width            float32
+	height           float32
+	entities         []renderEntityHolder
 	program          *render.Program
 	indexBuffer      *render.IndexBuffer
 	vertexArray      *render.VertexArray
@@ -21,23 +18,20 @@ type RenderSystem struct {
 	projectionMatrix mgl32.Mat4
 }
 
-type holder struct {
-	entity    ecs.BasicEntity
-	component *RenderComponent
+type renderEntityHolder struct {
+	entity          *ecs.BasicEntity
+	renderComponent *RenderComponent
 }
 
 func NewRenderSystem(width, height float32) *RenderSystem {
 	return &RenderSystem{
-		entities: map[uint64]struct {
-			*ecs.BasicEntity
-			renderComponent *RenderComponent
-		}{},
-		width:  width,
-		height: height,
+		entities: []renderEntityHolder{},
+		width:    width,
+		height:   height,
 	}
 }
 
-func (r *RenderSystem) New(world *ecs.World) {
+func (r *RenderSystem) New(*ecs.World) {
 	err := r.initialise()
 	if err != nil {
 		panic(err)
@@ -45,25 +39,15 @@ func (r *RenderSystem) New(world *ecs.World) {
 }
 
 func (r *RenderSystem) initialise() error {
-	var rc *RenderComponent
-	for _, v := range r.entities {
-		rc = v.renderComponent
-		break
-	}
 
 	render.UseDefaultBlending()
 
-	indices := []int32{
-		0, 1, 2,
-		0, 3, 2,
-	}
-
 	r.vertexArray = render.NewVertexArray()
-	r.indexBuffer = render.NewIndexBuffer(indices)
+	r.indexBuffer = render.NewIndexBuffer(r.generateIndexBuffer())
 
 	r.projectionMatrix = mgl32.Ortho(0, r.width, 0, r.height, -1.0, 1.0)
 
-	r.vertexBuffer = render.NewVertexBuffer(rc.Quad.ToBuffer())
+	r.vertexBuffer = render.NewVertexBuffer(r.generateVertexBuffer())
 	r.vertexArray.AddBuffer(r.vertexBuffer, render.NewVertexBufferLayout().AddLayoutFloats(2).AddLayoutFloats(4))
 
 	vertex := `#version 410 core
@@ -110,7 +94,33 @@ void main()
 	return nil
 }
 
-func (r *RenderSystem) Update(dt float32) {
+func (r *RenderSystem) generateIndexBuffer() []int32 {
+	result := make([]int32, 6*len(r.entities))
+
+	for i := int32(0); i < int32(len(r.entities)); i++ {
+		result = append(result, i*4)
+		result = append(result, i*4+1)
+		result = append(result, i*4+2)
+		result = append(result, i*4)
+		result = append(result, i*4+3)
+		result = append(result, i*4+2)
+	}
+
+	return result
+}
+
+func (r *RenderSystem) generateVertexBuffer() []float32 {
+	result := make([]float32, render.QuadBufferSize*len(r.entities))
+
+	for _, e := range r.entities {
+		result = append(result, e.renderComponent.Quad.ToBuffer()...)
+	}
+
+	return result
+}
+
+func (r *RenderSystem) Update(float32) {
+	r.indexBuffer.Update(r.generateIndexBuffer())
 	for _, e := range r.entities {
 		r.vertexBuffer.Update(e.renderComponent.Quad.ToBuffer())
 	}
@@ -126,13 +136,21 @@ func (r *RenderSystem) Update(dt float32) {
 }
 
 func (r *RenderSystem) Add(entity *ecs.BasicEntity, renderComponent *RenderComponent) *RenderSystem {
-	r.entities[entity.ID()] = struct {
-		*ecs.BasicEntity
-		renderComponent *RenderComponent
-	}{
-		entity, renderComponent,
-	}
+	r.entities = append(r.entities, renderEntityHolder{
+		entity: entity, renderComponent: renderComponent,
+	})
 	return r
 }
 
-func (r *RenderSystem) Remove(_ ecs.BasicEntity) {}
+func (r *RenderSystem) Remove(basic ecs.BasicEntity) {
+	var del = -1
+	for index, e := range r.entities {
+		if e.entity.ID() == basic.ID() {
+			del = index
+			break
+		}
+	}
+	if del >= 0 {
+		r.entities = append(r.entities[:del], r.entities[del+1:]...)
+	}
+}

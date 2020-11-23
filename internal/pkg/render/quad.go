@@ -9,6 +9,8 @@ import "github.com/go-gl/mathgl/mgl32"
 
 */
 
+const QuadBufferSize = 24
+
 type Quad struct {
 	Position mgl32.Vec4
 	Colour   mgl32.Vec4
