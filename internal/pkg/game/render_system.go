@@ -122,10 +122,7 @@ func (r *RenderSystem) Update(float32) {
 
 	render.Clear(colourDarkNavy.R, colourDarkNavy.G, colourDarkNavy.B, colourDarkNavy.A)
 
-	r.program.Bind()
-	r.program.SetUniformMat4f("u_MVP", r.projectionMatrix)
-
-	render.Render(r.vertexArray, r.indexBuffer, r.program)
+	render.Triangles(r.vertexArray, r.indexBuffer, r.program, r.projectionMatrix)
 }
 
 func (r *RenderSystem) Add(entity *ecs.BasicEntity, renderComponent *RenderComponent) {
