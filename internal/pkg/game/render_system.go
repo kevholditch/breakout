@@ -129,7 +129,7 @@ func (r *RenderSystem) Update(float32) {
 	r.vertexBuffer = render.NewVertexBuffer(r.generateVertexBuffer())
 	r.vertexArray.AddBuffer(r.vertexBuffer, render.NewVertexBufferLayout().AddLayoutFloats(2).AddLayoutFloats(4))
 
-	render.Clear()
+	render.Clear(colourDarkBlue.R, colourDarkBlue.G, colourDarkBlue.B, colourDarkBlue.A)
 
 	r.program.Bind()
 	r.program.SetUniformMat4f("u_MVP", r.projectionMatrix)

@@ -2,7 +2,6 @@ package game
 
 import (
 	"github.com/EngoEngine/ecs"
-	"github.com/kevholditch/breakout/internal/pkg/render"
 )
 
 type PlayerEntity struct {
@@ -13,7 +12,7 @@ type PlayerEntity struct {
 
 func NewPlayer() *PlayerEntity {
 
-	playerQuad := render.NewQuad(200, 20, 200, 30, 0.7, 0.8, 0.2, 1.0)
+	playerQuad := NewQuadWithColour(200, 20, 200, 30, colourWhite)
 
 	return &PlayerEntity{
 		BasicEntity:     ecs.NewBasic(),

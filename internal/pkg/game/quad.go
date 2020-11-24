@@ -1,4 +1,4 @@
-package render
+package game
 
 import "github.com/go-gl/mathgl/mgl32"
 
@@ -21,6 +21,10 @@ func NewQuad(x, y, w, h, r, g, b, a float32) *Quad {
 		Position: [4]float32{x, y, x + w, y + h},
 		Colour:   [4]float32{r, g, b, a},
 	}
+}
+
+func NewQuadWithColour(x, y, w, h float32, c Colour) *Quad {
+	return NewQuad(x, y, w, h, c.R, c.G, c.B, c.A)
 }
 
 func (q *Quad) Width() float32 {

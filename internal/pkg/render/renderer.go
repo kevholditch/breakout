@@ -4,7 +4,8 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
-func Clear() {
+func Clear(r, g, b, a float32) {
+	gl.ClearColor(r, g, b, a)
 	gl.Clear(gl.COLOR_BUFFER_BIT)
 }
 

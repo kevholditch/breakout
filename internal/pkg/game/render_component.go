@@ -1,13 +1,9 @@
 package game
 
-import (
-	"github.com/kevholditch/breakout/internal/pkg/render"
-)
-
 type RenderComponent struct {
-	Quad *render.Quad
+	Quad *Quad
 }
 
-func NewRenderComponent(q *render.Quad) *RenderComponent {
+func NewRenderComponent(q *Quad) *RenderComponent {
 	return &RenderComponent{Quad: q}
 }

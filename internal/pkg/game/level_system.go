@@ -2,7 +2,6 @@ package game
 
 import (
 	"github.com/EngoEngine/ecs"
-	"github.com/kevholditch/breakout/internal/pkg/render"
 )
 
 type LevelSystem struct {
@@ -31,20 +30,31 @@ func (l *LevelSystem) New(world *ecs.World) {
 }
 
 func (l *LevelSystem) generateLevel() {
-	l.currentBlocks = []*BlockEntity{}
-	leftMargin := float32(20)
-	blockWidth := float32(80)
-	blockSpacing := float32(10)
-	blockHeight := float32(20)
-	topMargin := float32(200)
 
-	for i := 0; i < 11; i++ {
-		l.currentBlocks = append(l.currentBlocks,
-			&BlockEntity{
-				BasicEntity: ecs.NewBasic(),
-				RenderComponent: NewRenderComponent(render.NewQuad((float32(i)*(blockWidth+blockSpacing))+leftMargin, l.playingSpace.Height-topMargin, blockWidth, blockHeight,
-					0.9, 0.3, 0.7, 1.0)),
-			})
+	l.currentBlocks = []*BlockEntity{}
+	blockWidth := float32(80)
+
+	blockHeight := float32(20)
+	topMargin := float32(100)
+	sideMargin := float32(10)
+	blockMargin := float32(10)
+
+	blocksInARow := float32(11)
+	spacesInARow := blocksInARow - 1
+	blockRowLength := blocksInARow * blockWidth
+	blockSpacing := (l.playingSpace.Width - ((sideMargin * 2) + blockRowLength)) / spacesInARow
+	numberOfRows := float32(4)
+
+	for j := float32(0); j < numberOfRows; j++ {
+		y := (l.playingSpace.Height - topMargin) - (j * (blockHeight + blockMargin))
+		for i := float32(0); i < blocksInARow; i++ {
+			l.currentBlocks = append(l.currentBlocks,
+				&BlockEntity{
+					BasicEntity: ecs.NewBasic(),
+					RenderComponent: NewRenderComponent(NewQuadWithColour((i*(blockWidth+blockSpacing))+sideMargin, y, blockWidth, blockHeight,
+						colourLimeGreen)),
+				})
+		}
 	}
 
 }
