@@ -43,14 +43,6 @@ func (r *RenderSystem) initialise() error {
 
 	render.UseDefaultBlending()
 
-	//r.vertexArray = render.NewVertexArray()
-	//r.indexBuffer = render.NewIndexBuffer(r.generateIndexBuffer())
-	//
-	//r.projectionMatrix = mgl32.Ortho(0, r.width, 0, r.height, -1.0, 1.0)
-	//
-	//r.vertexBuffer = render.NewVertexBuffer(r.generateVertexBuffer())
-	//r.vertexArray.AddBuffer(r.vertexBuffer, render.NewVertexBufferLayout().AddLayoutFloats(2).AddLayoutFloats(4))
-
 	vertex := `#version 410 core
 
 layout(location = 0) in vec4 position;
