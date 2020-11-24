@@ -49,7 +49,7 @@ func (l *LevelSystem) generateLevel() {
 		y := (l.playingSpace.Height - topMargin) - (j * (blockHeight + blockMargin))
 		alpha := float32(1)
 		for i := float32(0); i < blocksInARow; i++ {
-			blockColour := colourLimeGreen
+			blockColour := colourTeal
 			blockColour.A = alpha
 			l.currentBlocks = append(l.currentBlocks,
 				&BlockEntity{
