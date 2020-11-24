@@ -25,9 +25,10 @@ type renderEntityHolder struct {
 
 func NewRenderSystem(windowSize WindowSize) *RenderSystem {
 	return &RenderSystem{
-		entities: []renderEntityHolder{},
-		width:    windowSize.Width,
-		height:   windowSize.Height,
+		entities:         []renderEntityHolder{},
+		width:            windowSize.Width,
+		height:           windowSize.Height,
+		projectionMatrix: mgl32.Ortho(0, windowSize.Width, 0, windowSize.Height, -1.0, 1.0),
 	}
 }
 
@@ -123,8 +124,6 @@ func (r *RenderSystem) Update(float32) {
 
 	r.vertexArray = render.NewVertexArray()
 	r.indexBuffer = render.NewIndexBuffer(r.generateIndexBuffer())
-
-	r.projectionMatrix = mgl32.Ortho(0, r.width, 0, r.height, -1.0, 1.0)
 
 	r.vertexBuffer = render.NewVertexBuffer(r.generateVertexBuffer())
 	r.vertexArray.AddBuffer(r.vertexBuffer, render.NewVertexBufferLayout().AddLayoutFloats(2).AddLayoutFloats(4))
