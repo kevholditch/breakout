@@ -47,13 +47,17 @@ func (l *LevelSystem) generateLevel() {
 
 	for j := float32(0); j < numberOfRows; j++ {
 		y := (l.playingSpace.Height - topMargin) - (j * (blockHeight + blockMargin))
+		alpha := float32(1)
 		for i := float32(0); i < blocksInARow; i++ {
+			blockColour := colourLimeGreen
+			blockColour.A = alpha
 			l.currentBlocks = append(l.currentBlocks,
 				&BlockEntity{
 					BasicEntity: ecs.NewBasic(),
 					RenderComponent: NewRenderComponent(NewQuadWithColour((i*(blockWidth+blockSpacing))+sideMargin, y, blockWidth, blockHeight,
-						colourLimeGreen)),
+						blockColour)),
 				})
+			alpha -= 0.05
 		}
 	}
 
