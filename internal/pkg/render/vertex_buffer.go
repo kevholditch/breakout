@@ -6,6 +6,7 @@ import (
 
 type VertexBuffer struct {
 	handle uint32
+	count  int32
 }
 
 func NewVertexBuffer(values []float32) *VertexBuffer {
@@ -16,12 +17,16 @@ func NewVertexBuffer(values []float32) *VertexBuffer {
 	gl.BindBuffer(gl.ARRAY_BUFFER, buffer)
 	gl.BufferData(gl.ARRAY_BUFFER, len(values)*sizeOfFloat32, gl.Ptr(values), gl.DYNAMIC_DRAW)
 
-	return &VertexBuffer{handle: buffer}
+	return &VertexBuffer{handle: buffer, count: int32(len(values))}
 }
 
 func (v *VertexBuffer) Update(values []float32) {
 	v.Bind()
 	gl.BufferData(gl.ARRAY_BUFFER, len(values)*sizeOfFloat32, gl.Ptr(values), gl.DYNAMIC_DRAW)
+}
+
+func (v *VertexBuffer) GetCount() int32 {
+	return v.count
 }
 
 func (v *VertexBuffer) Bind() {

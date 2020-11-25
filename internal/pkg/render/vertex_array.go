@@ -6,6 +6,7 @@ import (
 
 type VertexArray struct {
 	handle uint32
+	count  int32
 }
 
 func NewVertexArray() *VertexArray {
@@ -16,7 +17,9 @@ func NewVertexArray() *VertexArray {
 	return &VertexArray{handle: vao}
 }
 
-func (v *VertexArray) AddBuffer(vb *VertexBuffer, layout *VertexBufferLayout) {
+func (v *VertexArray) AddBuffer(vb *VertexBuffer, layout *VertexBufferLayout) *VertexArray {
+	v.count = vb.GetCount()
+
 	vb.Bind()
 
 	offset := 0
@@ -26,6 +29,12 @@ func (v *VertexArray) AddBuffer(vb *VertexBuffer, layout *VertexBufferLayout) {
 		offset += int(layout.elements[i].getSize())
 	}
 
+	return v
+
+}
+
+func (v *VertexArray) GetBufferCount() int32 {
+	return v.count
 }
 
 func (v *VertexArray) Bind() {

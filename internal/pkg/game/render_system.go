@@ -5,6 +5,7 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/kevholditch/breakout/internal/pkg/render"
+	"math"
 )
 
 type RenderSystem struct {
@@ -12,9 +13,6 @@ type RenderSystem struct {
 	height           float32
 	entities         []renderEntityHolder
 	program          *render.Program
-	indexBuffer      *render.IndexBuffer
-	vertexArray      *render.VertexArray
-	vertexBuffer     *render.VertexBuffer
 	projectionMatrix mgl32.Mat4
 }
 
@@ -110,19 +108,37 @@ func (r *RenderSystem) generateVertexBuffer() []float32 {
 
 func (r *RenderSystem) Update(float32) {
 
-	r.vertexArray = render.NewVertexArray()
-	r.indexBuffer = render.NewIndexBuffer(r.generateIndexBuffer())
+	// quad buffers
+	render.NewVertexArray().
+		AddBuffer(
+			render.NewVertexBuffer(r.generateVertexBuffer()), render.NewVertexBufferLayout().
+				AddLayoutFloats(2).AddLayoutFloats(4))
 
-	r.vertexBuffer = render.NewVertexBuffer(r.generateVertexBuffer())
-	r.vertexArray.AddBuffer(r.vertexBuffer, render.NewVertexBufferLayout().AddLayoutFloats(2).AddLayoutFloats(4))
-
-	//gl.ClearColor(colourDarkNavy.R, colourDarkNavy.G, colourDarkNavy.B, colourDarkNavy.A)
 	gl.Clear(gl.COLOR_BUFFER_BIT)
 
 	r.program.Bind()
 	r.program.SetUniformMat4f("u_MVP", r.projectionMatrix)
-	gl.DrawElements(gl.TRIANGLES, r.indexBuffer.GetCount(), gl.UNSIGNED_INT, gl.PtrOffset(0))
+	gl.DrawElements(gl.TRIANGLES, render.NewIndexBuffer(r.generateIndexBuffer()).GetCount(), gl.UNSIGNED_INT, gl.PtrOffset(0))
 
+	triangleAmount := float32(60)
+	twicePi := float32(2.0) * math.Pi
+
+	var positions []float32
+	x := float32(0)
+	y := float32(0)
+	radius := float32(20)
+	for i := float32(0); i <= triangleAmount; i++ {
+		x1 := x + (radius * float32(math.Cos(float64(i*twicePi/triangleAmount))))
+		y1 := y + (radius * float32(math.Sin(float64(i*twicePi/triangleAmount))))
+		positions = append(positions, x1, y1)
+	}
+
+	// circle buffers
+	mvp := r.projectionMatrix.Mul4(mgl32.Ident4().Mul4(mgl32.Translate3D(200, 200, 0)))
+	r.program.SetUniformMat4f("u_MVP", mvp)
+
+	gl.DrawArrays(gl.TRIANGLE_FAN, 0, render.NewVertexArray().
+		AddBuffer(render.NewVertexBuffer(positions), render.NewVertexBufferLayout().AddLayoutFloats(2)).GetBufferCount())
 }
 
 func (r *RenderSystem) Add(entity *ecs.BasicEntity, renderComponent *RenderComponent) {
