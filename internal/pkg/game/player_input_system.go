@@ -5,7 +5,7 @@ import "github.com/EngoEngine/ecs"
 type PlayerInputSystem struct {
 	entities map[uint64]struct {
 		*ecs.BasicEntity
-		moveComponent *MoveComponent
+		moveComponent *LateralMoveComponent
 		increment     float32
 	}
 	subscribe func(func(int), func(int))
@@ -16,7 +16,7 @@ func NewPlayerInputSystem(subscribe func(func(int), func(int))) *PlayerInputSyst
 	return &PlayerInputSystem{
 		entities: map[uint64]struct {
 			*ecs.BasicEntity
-			moveComponent *MoveComponent
+			moveComponent *LateralMoveComponent
 			increment     float32
 		}{},
 		subscribe: subscribe,
@@ -24,11 +24,11 @@ func NewPlayerInputSystem(subscribe func(func(int), func(int))) *PlayerInputSyst
 
 }
 
-func (m *PlayerInputSystem) Add(entity *ecs.BasicEntity, moveComponent *MoveComponent) *PlayerInputSystem {
+func (m *PlayerInputSystem) Add(entity *ecs.BasicEntity, moveComponent *LateralMoveComponent) *PlayerInputSystem {
 
 	m.entities[entity.ID()] = struct {
 		*ecs.BasicEntity
-		moveComponent *MoveComponent
+		moveComponent *LateralMoveComponent
 		increment     float32
 	}{
 		entity, moveComponent, 1.0,

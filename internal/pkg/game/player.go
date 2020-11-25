@@ -7,7 +7,7 @@ import (
 type PlayerEntity struct {
 	ecs.BasicEntity
 	RenderComponent *RenderComponent
-	MoveComponent   *MoveComponent
+	MoveComponent   *LateralMoveComponent
 }
 
 func NewPlayer() *PlayerEntity {
@@ -17,7 +17,7 @@ func NewPlayer() *PlayerEntity {
 	return &PlayerEntity{
 		BasicEntity:     ecs.NewBasic(),
 		RenderComponent: NewRenderComponent(playerQuad),
-		MoveComponent:   NewMoveComponent(playerQuad, 0.0),
+		MoveComponent:   NewLateralMoveComponent(playerQuad, 0.0),
 	}
 
 }

@@ -14,6 +14,7 @@ type RenderSystem struct {
 	entities         []renderEntityHolder
 	program          *render.Program
 	projectionMatrix mgl32.Mat4
+	generator        *TriangleIndexBufferGenerator
 }
 
 type renderEntityHolder struct {
@@ -27,6 +28,7 @@ func NewRenderSystem(windowSize WindowSize) *RenderSystem {
 		width:            windowSize.Width,
 		height:           windowSize.Height,
 		projectionMatrix: mgl32.Ortho(0, windowSize.Width, 0, windowSize.Height, -1.0, 1.0),
+		generator:        NewTriangleIndexBufferGenerator(),
 	}
 }
 
@@ -86,16 +88,6 @@ void main()
 	return nil
 }
 
-func (r *RenderSystem) generateIndexBuffer() []int32 {
-	var result []int32
-
-	for i := int32(0); i < int32(len(r.entities)); i++ {
-		result = append(result, i*4, i*4+1, i*4+2, i*4, i*4+3, i*4+2)
-	}
-
-	return result
-}
-
 func (r *RenderSystem) generateVertexBuffer() []float32 {
 	var result []float32
 
@@ -118,7 +110,7 @@ func (r *RenderSystem) Update(float32) {
 
 	r.program.Bind()
 	r.program.SetUniformMat4f("u_MVP", r.projectionMatrix)
-	gl.DrawElements(gl.TRIANGLES, render.NewIndexBuffer(r.generateIndexBuffer()).GetCount(), gl.UNSIGNED_INT, gl.PtrOffset(0))
+	gl.DrawElements(gl.TRIANGLES, render.NewIndexBuffer(r.generator.Generate(len(r.entities))).GetCount(), gl.UNSIGNED_INT, gl.PtrOffset(0))
 
 	triangleAmount := float32(60)
 	twicePi := float32(2.0) * math.Pi

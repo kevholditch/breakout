@@ -7,7 +7,7 @@ type PlayerMovementSystem struct {
 	height   float32
 	entities map[uint64]struct {
 		*ecs.BasicEntity
-		moveComponent *MoveComponent
+		moveComponent *LateralMoveComponent
 	}
 }
 
@@ -18,16 +18,16 @@ func NewPlayerMovementSystem(space PlayingSpace) *PlayerMovementSystem {
 		height: space.Height,
 		entities: map[uint64]struct {
 			*ecs.BasicEntity
-			moveComponent *MoveComponent
+			moveComponent *LateralMoveComponent
 		}{}}
 
 	return m
 }
 
-func (m *PlayerMovementSystem) Add(entity *ecs.BasicEntity, moveComponent *MoveComponent) *PlayerMovementSystem {
+func (m *PlayerMovementSystem) Add(entity *ecs.BasicEntity, moveComponent *LateralMoveComponent) *PlayerMovementSystem {
 	m.entities[entity.ID()] = struct {
 		*ecs.BasicEntity
-		moveComponent *MoveComponent
+		moveComponent *LateralMoveComponent
 	}{
 		entity, moveComponent,
 	}
