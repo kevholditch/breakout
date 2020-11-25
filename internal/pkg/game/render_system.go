@@ -42,6 +42,7 @@ func (r *RenderSystem) New(*ecs.World) {
 func (r *RenderSystem) initialise() error {
 
 	render.UseDefaultBlending()
+	gl.ClearColor(colourDarkNavy.R, colourDarkNavy.G, colourDarkNavy.B, colourDarkNavy.A)
 
 	vertex := `#version 410 core
 
@@ -91,12 +92,7 @@ func (r *RenderSystem) generateIndexBuffer() []int32 {
 	var result []int32
 
 	for i := int32(0); i < int32(len(r.entities)); i++ {
-		result = append(result, i*4)
-		result = append(result, i*4+1)
-		result = append(result, i*4+2)
-		result = append(result, i*4)
-		result = append(result, i*4+3)
-		result = append(result, i*4+2)
+		result = append(result, i*4, i*4+1, i*4+2, i*4, i*4+3, i*4+2)
 	}
 
 	return result
@@ -120,9 +116,13 @@ func (r *RenderSystem) Update(float32) {
 	r.vertexBuffer = render.NewVertexBuffer(r.generateVertexBuffer())
 	r.vertexArray.AddBuffer(r.vertexBuffer, render.NewVertexBufferLayout().AddLayoutFloats(2).AddLayoutFloats(4))
 
-	render.Clear(colourDarkNavy.R, colourDarkNavy.G, colourDarkNavy.B, colourDarkNavy.A)
+	//gl.ClearColor(colourDarkNavy.R, colourDarkNavy.G, colourDarkNavy.B, colourDarkNavy.A)
+	gl.Clear(gl.COLOR_BUFFER_BIT)
 
-	render.Triangles(r.vertexArray, r.indexBuffer, r.program, r.projectionMatrix)
+	r.program.Bind()
+	r.program.SetUniformMat4f("u_MVP", r.projectionMatrix)
+	gl.DrawElements(gl.TRIANGLES, r.indexBuffer.GetCount(), gl.UNSIGNED_INT, gl.PtrOffset(0))
+
 }
 
 func (r *RenderSystem) Add(entity *ecs.BasicEntity, renderComponent *RenderComponent) {
