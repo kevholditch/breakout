@@ -8,13 +8,12 @@ import (
 )
 
 type RenderSystem struct {
-	width             float32
-	height            float32
-	entities          []renderEntityHolder
-	quadRenderProgram *render.Program
-	projectionMatrix  mgl32.Mat4
-	generator         *TriangleIndexBufferGenerator
-	circleRenderer    *CircleRenderer
+	width            float32
+	height           float32
+	entities         []renderEntityHolder
+	projectionMatrix mgl32.Mat4
+	circleRenderer   *CircleRenderer
+	quadRenderer     *QuadRenderer
 }
 
 type renderEntityHolder struct {
@@ -29,17 +28,14 @@ func NewRenderSystem(windowSize WindowSize) *RenderSystem {
 		width:            windowSize.Width,
 		height:           windowSize.Height,
 		projectionMatrix: proj,
-		generator:        NewTriangleIndexBufferGenerator(),
 		circleRenderer:   NewCircleRenderer(proj),
+		quadRenderer:     NewQuadRenderer(proj),
 	}
 }
 
 func (r *RenderSystem) New(*ecs.World) {
-
 	render.UseDefaultBlending()
 	gl.ClearColor(colourDarkNavy.R, colourDarkNavy.G, colourDarkNavy.B, colourDarkNavy.A)
-
-	r.quadRenderProgram = NewQuadShaderProgramOrPanic()
 }
 
 func (r *RenderSystem) quadVertexBuffer() []float32 {
@@ -56,18 +52,9 @@ func (r *RenderSystem) quadVertexBuffer() []float32 {
 
 func (r *RenderSystem) Update(float32) {
 
-	// quad buffers
-	render.NewVertexArray().
-		AddBuffer(
-			render.NewVertexBuffer(r.quadVertexBuffer()), render.NewVertexBufferLayout().
-				AddLayoutFloats(2).AddLayoutFloats(4))
-
 	gl.Clear(gl.COLOR_BUFFER_BIT)
 
-	r.quadRenderProgram.Bind()
-	r.quadRenderProgram.SetUniformMat4f("u_MVP", r.projectionMatrix)
-	gl.DrawElements(gl.TRIANGLES, render.NewIndexBuffer(r.generator.Generate(len(r.entities))).GetCount(), gl.UNSIGNED_INT, gl.PtrOffset(0))
-
+	r.quadRenderer.Render()
 	r.circleRenderer.Render()
 
 }
@@ -78,6 +65,9 @@ func (r *RenderSystem) Add(entity *ecs.BasicEntity, renderComponent *RenderCompo
 	})
 	if renderComponent.Circle != nil {
 		r.circleRenderer.Add(entity.ID(), renderComponent.Circle)
+	}
+	if renderComponent.Quad != nil {
+		r.quadRenderer.Add(entity.ID(), renderComponent.Quad)
 	}
 }
 
