@@ -7,7 +7,7 @@ type PlayerMovementSystem struct {
 	height   float32
 	entities map[uint64]struct {
 		*ecs.BasicEntity
-		moveComponent *LateralMoveComponent
+		lateralMoveComponent *LateralMoveComponent
 	}
 }
 
@@ -18,7 +18,7 @@ func NewPlayerMovementSystem(space PlayingSpace) *PlayerMovementSystem {
 		height: space.Height,
 		entities: map[uint64]struct {
 			*ecs.BasicEntity
-			moveComponent *LateralMoveComponent
+			lateralMoveComponent *LateralMoveComponent
 		}{}}
 
 	return m
@@ -27,7 +27,7 @@ func NewPlayerMovementSystem(space PlayingSpace) *PlayerMovementSystem {
 func (m *PlayerMovementSystem) Add(entity *ecs.BasicEntity, moveComponent *LateralMoveComponent) *PlayerMovementSystem {
 	m.entities[entity.ID()] = struct {
 		*ecs.BasicEntity
-		moveComponent *LateralMoveComponent
+		lateralMoveComponent *LateralMoveComponent
 	}{
 		entity, moveComponent,
 	}
@@ -36,16 +36,16 @@ func (m *PlayerMovementSystem) Add(entity *ecs.BasicEntity, moveComponent *Later
 
 func (m *PlayerMovementSystem) Update(dt float32) {
 	for _, e := range m.entities {
-		moveAmount := dt * e.moveComponent.Speed
-		if e.moveComponent.Quad.Position.X()+moveAmount < 0 {
-			e.moveComponent.Quad.Position = [4]float32{0, e.moveComponent.Quad.Position.Y(), e.moveComponent.Quad.Width(), e.moveComponent.Quad.Position.W()}
-			e.moveComponent.Speed = 0
-		} else if e.moveComponent.Quad.Position.Z()+moveAmount > m.width {
-			e.moveComponent.Quad.Position = [4]float32{m.width - e.moveComponent.Quad.Width(), e.moveComponent.Quad.Position.Y(), m.width, e.moveComponent.Quad.Position.W()}
-			e.moveComponent.Speed = 0
+		moveAmount := dt * e.lateralMoveComponent.Speed
+		if e.lateralMoveComponent.Quad.Position.X()+moveAmount < 0 {
+			e.lateralMoveComponent.Quad.Position = [4]float32{0, e.lateralMoveComponent.Quad.Position.Y(), e.lateralMoveComponent.Quad.Width(), e.lateralMoveComponent.Quad.Position.W()}
+			e.lateralMoveComponent.Speed = 0
+		} else if e.lateralMoveComponent.Quad.Position.Z()+moveAmount > m.width {
+			e.lateralMoveComponent.Quad.Position = [4]float32{m.width - e.lateralMoveComponent.Quad.Width(), e.lateralMoveComponent.Quad.Position.Y(), m.width, e.lateralMoveComponent.Quad.Position.W()}
+			e.lateralMoveComponent.Speed = 0
 		} else {
-			e.moveComponent.Quad.Position[0] += moveAmount
-			e.moveComponent.Quad.Position[2] += moveAmount
+			e.lateralMoveComponent.Quad.Position[0] += moveAmount
+			e.lateralMoveComponent.Quad.Position[2] += moveAmount
 		}
 	}
 }

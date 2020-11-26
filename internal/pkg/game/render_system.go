@@ -8,13 +8,13 @@ import (
 )
 
 type RenderSystem struct {
-	width               float32
-	height              float32
-	entities            []renderEntityHolder
-	quadRenderProgram   *render.Program
-	circleRenderProgram *render.Program
-	projectionMatrix    mgl32.Mat4
-	generator           *TriangleIndexBufferGenerator
+	width             float32
+	height            float32
+	entities          []renderEntityHolder
+	quadRenderProgram *render.Program
+	projectionMatrix  mgl32.Mat4
+	generator         *TriangleIndexBufferGenerator
+	circleRenderer    *CircleRenderer
 }
 
 type renderEntityHolder struct {
@@ -23,12 +23,14 @@ type renderEntityHolder struct {
 }
 
 func NewRenderSystem(windowSize WindowSize) *RenderSystem {
+	proj := mgl32.Ortho(0, windowSize.Width, 0, windowSize.Height, -1.0, 1.0)
 	return &RenderSystem{
 		entities:         []renderEntityHolder{},
 		width:            windowSize.Width,
 		height:           windowSize.Height,
-		projectionMatrix: mgl32.Ortho(0, windowSize.Width, 0, windowSize.Height, -1.0, 1.0),
+		projectionMatrix: proj,
 		generator:        NewTriangleIndexBufferGenerator(),
+		circleRenderer:   NewCircleRenderer(proj),
 	}
 }
 
@@ -38,7 +40,6 @@ func (r *RenderSystem) New(*ecs.World) {
 	gl.ClearColor(colourDarkNavy.R, colourDarkNavy.G, colourDarkNavy.B, colourDarkNavy.A)
 
 	r.quadRenderProgram = NewQuadShaderProgramOrPanic()
-	r.circleRenderProgram = NewCircleShaderProgramOrPanic()
 }
 
 func (r *RenderSystem) quadVertexBuffer() []float32 {
@@ -67,20 +68,7 @@ func (r *RenderSystem) Update(float32) {
 	r.quadRenderProgram.SetUniformMat4f("u_MVP", r.projectionMatrix)
 	gl.DrawElements(gl.TRIANGLES, render.NewIndexBuffer(r.generator.Generate(len(r.entities))).GetCount(), gl.UNSIGNED_INT, gl.PtrOffset(0))
 
-	// render circles - crap code right now
-	r.circleRenderProgram.Bind()
-
-	for _, e := range r.entities {
-		if e.renderComponent.Circle == nil {
-			continue
-		}
-		mvp := r.projectionMatrix.Mul4(mgl32.Ident4().Mul4(mgl32.Translate3D(e.renderComponent.Circle.Position.X(), e.renderComponent.Circle.Position.Y(), 0)))
-		r.circleRenderProgram.SetUniformMat4f("u_MVP", mvp)
-		r.circleRenderProgram.SetUniformVec4("u_Colour", e.renderComponent.Circle.Colour)
-
-		gl.DrawArrays(gl.TRIANGLE_FAN, 0, render.NewVertexArray().
-			AddBuffer(render.NewVertexBuffer(e.renderComponent.Circle.ToBuffer()), render.NewVertexBufferLayout().AddLayoutFloats(2)).GetBufferCount())
-	}
+	r.circleRenderer.Render()
 
 }
 
@@ -88,6 +76,9 @@ func (r *RenderSystem) Add(entity *ecs.BasicEntity, renderComponent *RenderCompo
 	r.entities = append(r.entities, renderEntityHolder{
 		entity: entity, renderComponent: renderComponent,
 	})
+	if renderComponent.Circle != nil {
+		r.circleRenderer.Add(entity.ID(), renderComponent.Circle)
+	}
 }
 
 func (r *RenderSystem) Remove(basic ecs.BasicEntity) {
