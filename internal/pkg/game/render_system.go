@@ -82,4 +82,6 @@ func (r *RenderSystem) Remove(basic ecs.BasicEntity) {
 	if del >= 0 {
 		r.entities = append(r.entities[:del], r.entities[del+1:]...)
 	}
+	r.circleRenderer.Remove(basic.ID())
+	r.quadRenderer.Remove(basic.ID())
 }

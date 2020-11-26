@@ -57,3 +57,16 @@ func (qr *QuadRenderer) Render() {
 	gl.DrawElements(gl.TRIANGLES, render.NewIndexBuffer(qr.generator.Generate(len(qr.quads))).GetCount(), gl.UNSIGNED_INT, gl.PtrOffset(0))
 
 }
+
+func (qr *QuadRenderer) Remove(id uint64) {
+	var del = -1
+	for index, e := range qr.quads {
+		if id == e.id {
+			del = index
+			break
+		}
+	}
+	if del >= 0 {
+		qr.quads = append(qr.quads[:del], qr.quads[del+1:]...)
+	}
+}

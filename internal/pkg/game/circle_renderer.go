@@ -60,5 +60,17 @@ func (cr *CircleRenderer) Render() {
 		gl.DrawArrays(gl.TRIANGLE_FAN, 0, cr.vertexArray.GetBufferCount())
 
 	}
+}
 
+func (qr *CircleRenderer) Remove(id uint64) {
+	var del = -1
+	for index, e := range qr.circles {
+		if id == e.id {
+			del = index
+			break
+		}
+	}
+	if del >= 0 {
+		qr.circles = append(qr.circles[:del], qr.circles[del+1:]...)
+	}
 }
