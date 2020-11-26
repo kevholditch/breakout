@@ -40,11 +40,13 @@ func Run() error {
 
 	world := ecs.World{}
 	player := NewPlayer()
+	ball := NewBall()
 
 	playingSpace := NewPlayingSpace(width, height)
 	world.AddSystem(NewFrameRateSystem())
 	renderSystem := NewRenderSystem(NewWindowSize(width, height))
 	renderSystem.Add(&player.BasicEntity, player.RenderComponent)
+	renderSystem.Add(&ball.BasicEntity, ball.RenderComponent)
 
 	world.AddSystem(renderSystem)
 	world.AddSystem(NewPlayerMovementSystem(playingSpace).Add(&player.BasicEntity, player.MoveComponent))

@@ -75,8 +75,8 @@ func (p *Program) getUniformLocation(name string) int32 {
 	return location
 }
 
-func (p *Program) SetUniformVec4(name string, v0, v1, v2, v3 float32) {
-	gl.Uniform4f(p.getUniformLocation(name), v0, v1, v2, v3)
+func (p *Program) SetUniformVec4(name string, v mgl32.Vec4) {
+	gl.Uniform4f(p.getUniformLocation(name), v[0], v[1], v[2], v[3])
 }
 
 func (p *Program) SetUniformI1(name string, v0 int32) {
