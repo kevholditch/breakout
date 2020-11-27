@@ -53,6 +53,8 @@ func Run() error {
 	world.AddSystem(NewPlayerInputSystem(w.OnKeyPress).Add(&player.BasicEntity, player.MoveComponent))
 	world.AddSystem(NewLevelSystem(playingSpace))
 
+	world.AddSystem(NewBallPhysicsSystem(player.RenderComponent.Quad).Add(&ball.BasicEntity, ball.BallPhysicsComponent))
+
 	last := time.Now()
 
 	for !w.ShouldClose() {
