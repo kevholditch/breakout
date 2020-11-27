@@ -62,15 +62,15 @@ func (cr *CircleRenderer) Render() {
 	}
 }
 
-func (qr *CircleRenderer) Remove(id uint64) {
+func (cr *CircleRenderer) Remove(id uint64) {
 	var del = -1
-	for index, e := range qr.circles {
+	for index, e := range cr.circles {
 		if id == e.id {
 			del = index
 			break
 		}
 	}
 	if del >= 0 {
-		qr.circles = append(qr.circles[:del], qr.circles[del+1:]...)
+		cr.circles = append(cr.circles[:del], cr.circles[del+1:]...)
 	}
 }
