@@ -1,41 +1,32 @@
 package game
 
-import "github.com/EngoEngine/ecs"
+import (
+	"github.com/EngoEngine/ecs"
+)
 
 type PlayerInputSystem struct {
-	entities map[uint64]struct {
-		*ecs.BasicEntity
-		moveComponent *LateralMoveComponent
-		increment     float32
-	}
-	subscribe func(func(int), func(int))
+	playerMoveComponent  *LateralMoveComponent
+	playerStateComponent *PlayerStateComponent
+	ballPhysicsComponent *BallPhysicsComponent
+	subscribe            func(func(int), func(int))
 }
 
-func NewPlayerInputSystem(subscribe func(func(int), func(int))) *PlayerInputSystem {
-
-	return &PlayerInputSystem{
-		entities: map[uint64]struct {
-			*ecs.BasicEntity
-			moveComponent *LateralMoveComponent
-			increment     float32
-		}{},
-		subscribe: subscribe,
+func NewPlayerInputSystem(subscribe func(func(int), func(int)), moveComponent *LateralMoveComponent,
+	stateComponent *PlayerStateComponent, ballPhysicsComponent *BallPhysicsComponent) *PlayerInputSystem {
+	p := &PlayerInputSystem{
+		subscribe:            subscribe,
+		playerMoveComponent:  moveComponent,
+		playerStateComponent: stateComponent,
+		ballPhysicsComponent: ballPhysicsComponent,
 	}
 
-}
-
-func (m *PlayerInputSystem) Add(entity *ecs.BasicEntity, moveComponent *LateralMoveComponent) *PlayerInputSystem {
-
-	m.entities[entity.ID()] = struct {
-		*ecs.BasicEntity
-		moveComponent *LateralMoveComponent
-		increment     float32
-	}{
-		entity, moveComponent, 1.0,
-	}
-
-	m.subscribe(func(key int) {
+	p.subscribe(func(key int) {
 		switch key {
+		case 32:
+			if stateComponent.State == Kickoff {
+				stateComponent.State = Playing
+				ballPhysicsComponent.Speed = [2]float32{0.5, 0.5}
+			}
 		case 263:
 			if moveComponent.Speed > 0 {
 				moveComponent.Speed = 0
@@ -53,7 +44,7 @@ func (m *PlayerInputSystem) Add(entity *ecs.BasicEntity, moveComponent *LateralM
 
 	})
 
-	return m
+	return p
 }
 
 func (m *PlayerInputSystem) Update(dt float32) {}

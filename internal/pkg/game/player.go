@@ -8,6 +8,7 @@ type PlayerEntity struct {
 	ecs.BasicEntity
 	RenderComponent *RenderComponent
 	MoveComponent   *LateralMoveComponent
+	StateComponent  *PlayerStateComponent
 }
 
 func NewPlayer() *PlayerEntity {
@@ -18,6 +19,7 @@ func NewPlayer() *PlayerEntity {
 		BasicEntity:     ecs.NewBasic(),
 		RenderComponent: NewRenderComponent(playerQuad),
 		MoveComponent:   NewLateralMoveComponent(playerQuad, 0.0),
+		StateComponent:  NewPlayerStateComponent(),
 	}
 
 }

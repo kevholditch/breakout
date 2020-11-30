@@ -50,10 +50,11 @@ func Run() error {
 
 	world.AddSystem(renderSystem)
 	world.AddSystem(NewPlayerMovementSystem(playingSpace).Add(&player.BasicEntity, player.MoveComponent))
-	world.AddSystem(NewPlayerInputSystem(w.OnKeyPress).Add(&player.BasicEntity, player.MoveComponent))
+	world.AddSystem(NewPlayerInputSystem(w.OnKeyPress, player.MoveComponent, player.StateComponent, ball.BallPhysicsComponent))
 	world.AddSystem(NewLevelSystem(playingSpace))
 
-	world.AddSystem(NewBallPhysicsSystem(player.RenderComponent.Quad).Add(&ball.BasicEntity, ball.BallPhysicsComponent))
+	world.AddSystem(NewBallPhysicsSystem(player.RenderComponent.Quad, player.StateComponent, playingSpace).
+		Add(&ball.BasicEntity, ball.BallPhysicsComponent))
 
 	last := time.Now()
 
