@@ -10,6 +10,7 @@ import (
 type Circle struct {
 	Position mgl32.Vec2
 	Colour   mgl32.Vec4
+	Radius   float32
 	buffer   []float32
 }
 
@@ -27,6 +28,7 @@ func NewCircle(x, y, radius, r, g, b, a float32) *Circle {
 	return &Circle{
 		Position: [2]float32{x, y},
 		Colour:   [4]float32{r, g, b, a},
+		Radius:   radius,
 		buffer:   buffer,
 	}
 }
@@ -37,6 +39,22 @@ func NewCircleWithColour(x, y, radius float32, c Colour) *Circle {
 
 func (c *Circle) ToBuffer() []float32 {
 	return c.buffer
+}
+
+func (c *Circle) LeftMost() float32 {
+	return c.Position.X() - c.Radius
+}
+
+func (c *Circle) RightMost() float32 {
+	return c.Position.X() + c.Radius
+}
+
+func (c *Circle) UpperMost() float32 {
+	return c.Position.Y() + c.Radius
+}
+
+func (c *Circle) LowerMost() float32 {
+	return c.Position.Y() - c.Radius
 }
 
 func NewCircleShaderProgramOrPanic() *render.Program {
