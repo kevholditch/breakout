@@ -15,6 +15,13 @@ type BlockEntity struct {
 	RenderComponent *RenderComponent
 }
 
+func NewBlockEntity(component *RenderComponent) *BlockEntity {
+	return &BlockEntity{
+		BasicEntity:     ecs.NewBasic(),
+		RenderComponent: component,
+	}
+}
+
 type RenderAdd interface {
 	Add(entity *ecs.BasicEntity, renderComponent *RenderComponent)
 }

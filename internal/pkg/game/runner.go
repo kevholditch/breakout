@@ -60,8 +60,7 @@ func Run() error {
 	world.AddSystem(NewPlayerInputSystem(w.OnKeyPress, player.MoveComponent, player.StateComponent, ball.BallPhysicsComponent))
 	world.AddSystem(NewLevelSystem(playingSpace))
 
-	world.AddSystem(NewBallPhysicsSystem(player.RenderComponent.Quad, player.StateComponent, playingSpace).
-		Add(&ball.BasicEntity, ball.BallPhysicsComponent))
+	world.AddSystem(NewBallPhysicsSystem(player.RenderComponent.Quad, player.StateComponent, playingSpace, ball.BallPhysicsComponent))
 
 	last := time.Now()
 
