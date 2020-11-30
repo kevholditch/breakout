@@ -49,11 +49,25 @@ func (b *BallPhysicsSystem) Update(dt float32) {
 
 				ballPosition := ball.ballPhysicsComponent.Circle.Position
 
+				// ball bouncing
 				if ballPosition.X() <= 0 || ballPosition.X() >= b.playingSpace.Width {
 					ball.ballPhysicsComponent.Speed[0] = ball.ballPhysicsComponent.Speed[0] * -1
 				}
-				if ballPosition.Y() <= 0 || ballPosition.Y() >= b.playingSpace.Height {
+				if ballPosition.Y() >= b.playingSpace.Height {
 					ball.ballPhysicsComponent.Speed[1] = ball.ballPhysicsComponent.Speed[1] * -1
+				}
+				if ballPosition.Y() <= 0 {
+					b.playerStateComponent.State = Kickoff
+				}
+
+				// check if we hit player if ball is going downwards
+				if ball.ballPhysicsComponent.Speed[1] < 0 {
+					if ballPosition.Y() <= (b.playerQuad.Position.W()+5) &&
+						ballPosition.Y() >= (b.playerQuad.Position.W()-5) &&
+						ballPosition.X() >= b.playerQuad.Position.X() &&
+						ballPosition.X() <= b.playerQuad.Position.Z() {
+						ball.ballPhysicsComponent.Speed[1] = ball.ballPhysicsComponent.Speed[1] * -1
+					}
 				}
 			}
 		}
