@@ -38,15 +38,22 @@ func Run() error {
 		return err
 	}
 
+	barHeight := 50
+
 	world := ecs.World{}
 	player := NewPlayer()
 	ball := NewBall()
+	hud := NewHud(barHeight, WindowDimensions{
+		Width:  width,
+		Height: height,
+	})
 
-	playingSpace := NewPlayingSpace(width, height)
+	playingSpace := NewPlayingSpace(width, height-barHeight)
 	world.AddSystem(NewFrameRateSystem())
 	renderSystem := NewRenderSystem(NewWindowSize(width, height))
 	renderSystem.Add(&player.BasicEntity, player.RenderComponent)
 	renderSystem.Add(&ball.BasicEntity, ball.RenderComponent)
+	renderSystem.Add(&hud.BasicEntity, hud.RenderComponent)
 
 	world.AddSystem(renderSystem)
 	world.AddSystem(NewPlayerMovementSystem(playingSpace).Add(&player.BasicEntity, player.MoveComponent))
