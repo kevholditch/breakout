@@ -2,7 +2,7 @@ package game
 
 import (
 	"github.com/EngoEngine/ecs"
-	"github.com/go-gl/gl/v2.1/gl"
+	"github.com/go-gl/gl/all-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/kevholditch/breakout/internal/pkg/render"
 )

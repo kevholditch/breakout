@@ -2,7 +2,7 @@ package render
 
 import (
 	"fmt"
-	"github.com/go-gl/gl/v2.1/gl"
+	"github.com/go-gl/gl/all-core/gl"
 	"strings"
 )
 
