@@ -73,8 +73,8 @@ func (b *BallPhysicsSystem) Update(dt float32) {
 			// check if we hit player if ball is going downwards
 			if b.ballPhysicsComponent.Speed[1] < 0 {
 
-				if circle.LowerMost() <= (b.playerQuad.Position.W()+tolerance) &&
-					circle.LowerMost() >= (b.playerQuad.Position.W()-tolerance) &&
+				if circle.LowerMost() <= b.playerQuad.Position.W() &&
+					circle.LowerMost() >= b.playerQuad.Position.Y() &&
 					circle.Position.X() >= b.playerQuad.Position.X() &&
 					circle.Position.X() <= b.playerQuad.Position.Z() {
 					b.ballPhysicsComponent.Speed[1] = b.ballPhysicsComponent.Speed[1] * -1
@@ -89,8 +89,8 @@ func (b *BallPhysicsSystem) Update(dt float32) {
 
 				// if ball going down
 				if b.ballPhysicsComponent.Speed[1] < 0 {
-					if circle.LowerMost() <= (q.Position.W()+tolerance) &&
-						circle.LowerMost() >= (q.Position.W()-tolerance) &&
+					if circle.LowerMost() <= q.Position.W() &&
+						circle.LowerMost() >= q.Position.Y() &&
 						circle.Position.X() >= q.Position.X() &&
 						circle.Position.X() <= q.Position.Z() {
 						b.ballPhysicsComponent.Speed[1] = b.ballPhysicsComponent.Speed[1] * -1
@@ -99,8 +99,8 @@ func (b *BallPhysicsSystem) Update(dt float32) {
 				}
 				// if ball going right
 				if b.ballPhysicsComponent.Speed[0] > 0 {
-					if circle.RightMost() <= (q.Position.X()+tolerance) &&
-						circle.RightMost() >= (q.Position.X()-tolerance) &&
+					if circle.RightMost() <= q.Position.Z() &&
+						circle.RightMost() >= q.Position.X() &&
 						circle.Position.Y() >= q.Position.Y() &&
 						circle.Position.Y() <= q.Position.W() {
 						b.ballPhysicsComponent.Speed[0] = b.ballPhysicsComponent.Speed[0] * -1
@@ -110,8 +110,8 @@ func (b *BallPhysicsSystem) Update(dt float32) {
 
 				// if ball going up
 				if b.ballPhysicsComponent.Speed[1] > 0 {
-					if circle.UpperMost() <= (q.Position.Y()+tolerance) &&
-						circle.UpperMost() >= (q.Position.Y()-tolerance) &&
+					if circle.UpperMost() <= q.Position.W() &&
+						circle.UpperMost() >= q.Position.Y() &&
 						circle.Position.X() >= q.Position.X() &&
 						circle.Position.X() <= q.Position.Z() {
 						b.ballPhysicsComponent.Speed[1] = b.ballPhysicsComponent.Speed[1] * -1
@@ -121,8 +121,8 @@ func (b *BallPhysicsSystem) Update(dt float32) {
 
 				// if ball going left
 				if b.ballPhysicsComponent.Speed[0] < 0 {
-					if circle.LeftMost() <= (q.Position.Z()+tolerance) &&
-						circle.LeftMost() >= (q.Position.Z()-tolerance) &&
+					if circle.LeftMost() <= q.Position.Z() &&
+						circle.LeftMost() >= q.Position.X() &&
 						circle.Position.Y() >= q.Position.Y() &&
 						circle.Position.Y() <= q.Position.W() {
 						b.ballPhysicsComponent.Speed[0] = b.ballPhysicsComponent.Speed[0] * -1
