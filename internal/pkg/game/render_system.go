@@ -18,6 +18,7 @@ type RenderSystem struct {
 	entities       []renderEntityHolder
 	circleRenderer *CircleRenderer
 	quadRenderer   *QuadRenderer
+	fontRenderer   *FontRenderer
 	renderers      []Renderer
 }
 
@@ -30,6 +31,7 @@ func NewRenderSystem(windowSize WindowSize) *RenderSystem {
 	proj := mgl32.Ortho(0, windowSize.Width, 0, windowSize.Height, -1.0, 1.0)
 	circleRenderer := NewCircleRenderer(proj)
 	quadRenderer := NewQuadRenderer(proj)
+	fontRenderer := NewFontRenderer(windowSize)
 
 	return &RenderSystem{
 		entities:       []renderEntityHolder{},
@@ -37,7 +39,8 @@ func NewRenderSystem(windowSize WindowSize) *RenderSystem {
 		height:         windowSize.Height,
 		circleRenderer: circleRenderer,
 		quadRenderer:   quadRenderer,
-		renderers:      []Renderer{circleRenderer, quadRenderer},
+		fontRenderer:   fontRenderer,
+		renderers:      []Renderer{circleRenderer, quadRenderer, fontRenderer},
 	}
 }
 
@@ -63,6 +66,9 @@ func (r *RenderSystem) Add(entity *ecs.BasicEntity, renderComponent *RenderCompo
 	}
 	if renderComponent.Quad != nil {
 		r.quadRenderer.Add(entity.ID(), renderComponent.Quad)
+	}
+	if renderComponent.TextBox != nil {
+		r.fontRenderer.Add(entity.ID(), renderComponent.TextBox)
 	}
 }
 
