@@ -4,8 +4,6 @@ import (
 	"github.com/EngoEngine/ecs"
 )
 
-const tolerance = float32(10)
-
 type BallPhysicsSystem struct {
 	playerQuad           *Quad
 	playerStateComponent *PlayerStateComponent
