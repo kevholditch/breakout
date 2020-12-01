@@ -7,6 +7,7 @@ import (
 type HudEntity struct {
 	ecs.BasicEntity
 	RenderComponent *RenderComponent
+	ScoreComponent  *ScoreComponent
 }
 
 type HudParams struct {
@@ -28,5 +29,6 @@ func NewHud(height int, dimensions WindowDimensions) *HudEntity {
 	return &HudEntity{
 		BasicEntity:     ecs.NewBasic(),
 		RenderComponent: renderComponent,
+		ScoreComponent:  NewScoreComponent(0),
 	}
 }
