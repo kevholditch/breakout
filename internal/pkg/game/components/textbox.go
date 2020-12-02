@@ -1,6 +1,8 @@
-package game
+package components
 
-import "github.com/go-gl/mathgl/mgl32"
+import (
+	"github.com/go-gl/mathgl/mgl32"
+)
 
 type TextBox struct {
 	Position mgl32.Vec2

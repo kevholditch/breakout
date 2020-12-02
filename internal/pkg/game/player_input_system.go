@@ -1,52 +1,79 @@
 package game
 
 import (
-	"github.com/EngoEngine/ecs"
+	"github.com/kevholditch/breakout/internal/pkg/ecs"
+	"github.com/kevholditch/breakout/internal/pkg/game/components"
 )
 
 type PlayerInputSystem struct {
-	playerMoveComponent  *LateralMoveComponent
-	playerStateComponent *PlayerStateComponent
-	ballPhysicsComponent *BallPhysicsComponent
-	subscribe            func(func(int), func(int))
+	subscribe func(func(int), func(int))
+	entities  []controllableEntity
 }
 
-func NewPlayerInputSystem(subscribe func(func(int), func(int)), moveComponent *LateralMoveComponent,
-	stateComponent *PlayerStateComponent, ballPhysicsComponent *BallPhysicsComponent) *PlayerInputSystem {
+type controllableEntity struct {
+	base                 *ecs.Entity
+	controlComponent     *SpeedControlComponent
+	playerStateComponent *components.PlayerStateComponent
+}
+
+func NewPlayerInputSystem(subscribe func(func(int), func(int))) *PlayerInputSystem {
 	p := &PlayerInputSystem{
-		subscribe:            subscribe,
-		playerMoveComponent:  moveComponent,
-		playerStateComponent: stateComponent,
-		ballPhysicsComponent: ballPhysicsComponent,
+		subscribe: subscribe,
+		entities:  []controllableEntity{},
 	}
 
-	p.subscribe(func(key int) {
+	return p
+}
+
+func (m *PlayerInputSystem) Add(entity *ecs.Entity) {
+
+	controlComponent := entity.Component(IsSpeedControllable).(*SpeedControlComponent)
+	playerStateComponent := entity.Component(components.HasPlayingState).(*components.PlayerStateComponent)
+	m.entities = append(m.entities, controllableEntity{
+		base:                 entity,
+		controlComponent:     controlComponent,
+		playerStateComponent: playerStateComponent,
+	})
+	m.subscribe(func(key int) {
 		switch key {
 		case 32:
-			if stateComponent.State == Kickoff {
-				stateComponent.State = Playing
-				ballPhysicsComponent.Speed = [2]float32{0.5, 0.5}
+			if playerStateComponent.State == components.Kickoff {
+				playerStateComponent.State = components.Playing
+				//ballPhysicsComponent.Speed = [2]float32{0.5, 0.5}
 			}
 		case 263:
-			if moveComponent.Speed > 0 {
-				moveComponent.Speed = 0
+			if controlComponent.Speed > 0 {
+				controlComponent.Speed = 0
 			} else {
-				moveComponent.Speed -= 1.0
+				controlComponent.Speed -= 1.0
 			}
 		case 262:
-			if moveComponent.Speed < 0 {
-				moveComponent.Speed = 0
+			if controlComponent.Speed < 0 {
+				controlComponent.Speed = 0
 			} else {
-				moveComponent.Speed += 1.0
+				controlComponent.Speed += 1.0
 			}
 		}
 	}, func(key int) {
 
 	})
-
-	return p
 }
 
-func (m *PlayerInputSystem) Update(dt float32) {}
+func (m *PlayerInputSystem) Update(elapsed float32) {}
 
-func (m *PlayerInputSystem) Remove(_ ecs.BasicEntity) {}
+func (m *PlayerInputSystem) Remove(entity *ecs.Entity) {
+	var del = -1
+	for index, e := range m.entities {
+		if e.base.ID() == entity.ID() {
+			del = index
+			break
+		}
+	}
+	if del >= 0 {
+		m.entities = append(m.entities[:del], m.entities[del+1:]...)
+	}
+}
+
+func (m *PlayerInputSystem) RequiredTypes() []interface{} {
+	return []interface{}{IsSpeedControllable, components.HasPlayingState}
+}

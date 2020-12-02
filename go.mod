@@ -13,6 +13,7 @@ require (
 	github.com/gobuffalo/packd v1.0.0 // indirect
 	github.com/gobuffalo/packr v1.30.1
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
+	github.com/google/uuid v1.1.2
 	github.com/liamg/aminal v0.9.0
 	github.com/markbates/pkger v0.17.1 // indirect
 	github.com/rogpeppe/go-internal v1.6.2 // indirect

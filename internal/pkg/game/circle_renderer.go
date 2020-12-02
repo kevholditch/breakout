@@ -3,13 +3,15 @@ package game
 import (
 	"github.com/go-gl/gl/all-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/google/uuid"
+	"github.com/kevholditch/breakout/internal/pkg/game/components"
 	"github.com/kevholditch/breakout/internal/pkg/render"
 )
 
 type CircleRenderer struct {
 	circles []struct {
-		id     uint64
-		circle *Circle
+		id     uuid.UUID
+		circle *components.Circle
 	}
 	buffer           []float32
 	vertexBuffer     *render.VertexBuffer
@@ -20,21 +22,21 @@ type CircleRenderer struct {
 
 func NewCircleRenderer(projectionMatrix mgl32.Mat4) *CircleRenderer {
 	return &CircleRenderer{circles: []struct {
-		id     uint64
-		circle *Circle
+		id     uuid.UUID
+		circle *components.Circle
 	}{},
 		buffer:           []float32{},
-		program:          NewCircleShaderProgramOrPanic(),
+		program:          components.NewCircleShaderProgramOrPanic(),
 		projectionMatrix: projectionMatrix,
 	}
 
 }
 
-func (cr *CircleRenderer) Add(id uint64, circle *Circle) {
+func (cr *CircleRenderer) Add(id uuid.UUID, circle *components.Circle) {
 	cr.circles = append(cr.circles,
 		struct {
-			id     uint64
-			circle *Circle
+			id     uuid.UUID
+			circle *components.Circle
 		}{
 			id:     id,
 			circle: circle,
@@ -62,7 +64,7 @@ func (cr *CircleRenderer) Render() {
 	}
 }
 
-func (cr *CircleRenderer) Remove(id uint64) {
+func (cr *CircleRenderer) Remove(id uuid.UUID) {
 	var del = -1
 	for index, e := range cr.circles {
 		if id == e.id {

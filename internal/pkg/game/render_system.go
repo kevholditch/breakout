@@ -1,15 +1,17 @@
 package game
 
 import (
-	"github.com/EngoEngine/ecs"
 	"github.com/go-gl/gl/all-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/google/uuid"
+	"github.com/kevholditch/breakout/internal/pkg/ecs"
+	"github.com/kevholditch/breakout/internal/pkg/game/components"
 	"github.com/kevholditch/breakout/internal/pkg/render"
 )
 
 type Renderer interface {
 	Render()
-	Remove(id uint64)
+	Remove(id uuid.UUID)
 }
 
 type RenderSystem struct {
@@ -23,8 +25,9 @@ type RenderSystem struct {
 }
 
 type renderEntityHolder struct {
-	entity          *ecs.BasicEntity
-	renderComponent *RenderComponent
+	entity          *ecs.Entity
+	renderComponent *components.RenderComponent
+	position        *components.PositionedComponent
 }
 
 func NewRenderSystem(windowSize WindowSize) *RenderSystem {
@@ -40,7 +43,11 @@ func NewRenderSystem(windowSize WindowSize) *RenderSystem {
 		circleRenderer: circleRenderer,
 		quadRenderer:   quadRenderer,
 		fontRenderer:   fontRenderer,
-		renderers:      []Renderer{circleRenderer, quadRenderer, fontRenderer},
+		renderers: []Renderer{
+			//circleRenderer,
+			quadRenderer,
+			//fontRenderer
+		},
 	}
 }
 
@@ -57,22 +64,27 @@ func (r *RenderSystem) Update(float32) {
 	}
 }
 
-func (r *RenderSystem) Add(entity *ecs.BasicEntity, renderComponent *RenderComponent) {
+func (r *RenderSystem) Add(entity *ecs.Entity) {
+	renderComponent := entity.Component(components.IsRenderable).(*components.RenderComponent)
+	position := entity.Component(components.IsPositioned).(*components.PositionedComponent)
+
 	r.entities = append(r.entities, renderEntityHolder{
-		entity: entity, renderComponent: renderComponent,
+		entity:          entity,
+		renderComponent: renderComponent,
+		position:        position,
 	})
 	if renderComponent.Circle != nil {
 		r.circleRenderer.Add(entity.ID(), renderComponent.Circle)
 	}
 	if renderComponent.Quad != nil {
-		r.quadRenderer.Add(entity.ID(), renderComponent.Quad)
+		r.quadRenderer.Add(entity.ID(), renderComponent.Quad, position)
 	}
 	if renderComponent.TextBox != nil {
 		r.fontRenderer.Add(entity.ID(), renderComponent.TextBox)
 	}
 }
 
-func (r *RenderSystem) Remove(basic ecs.BasicEntity) {
+func (r *RenderSystem) Remove(basic *ecs.Entity) {
 	var del = -1
 	for index, e := range r.entities {
 		if e.entity.ID() == basic.ID() {
@@ -85,5 +97,12 @@ func (r *RenderSystem) Remove(basic ecs.BasicEntity) {
 	}
 	for _, renderer := range r.renderers {
 		renderer.Remove(basic.ID())
+	}
+}
+
+func (r *RenderSystem) RequiredTypes() []interface{} {
+	return []interface{}{
+		components.IsRenderable,
+		components.IsPositioned,
 	}
 }

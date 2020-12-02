@@ -3,14 +3,16 @@ package game
 import (
 	"bytes"
 	"github.com/gobuffalo/packr"
+	"github.com/google/uuid"
+	"github.com/kevholditch/breakout/internal/pkg/game/components"
 	"github.com/liamg/aminal/glfont"
 )
 
 type FontRenderer struct {
 	font      *glfont.Font
 	textBoxes []struct {
-		id      uint64
-		textBox *TextBox
+		id      uuid.UUID
+		textBox *components.TextBox
 	}
 }
 
@@ -35,18 +37,18 @@ func (fr *FontRenderer) Render() {
 	}
 }
 
-func (fr *FontRenderer) Add(id uint64, textBox *TextBox) {
+func (fr *FontRenderer) Add(id uuid.UUID, textBox *components.TextBox) {
 	fr.textBoxes = append(fr.textBoxes,
 		struct {
-			id      uint64
-			textBox *TextBox
+			id      uuid.UUID
+			textBox *components.TextBox
 		}{
 			id:      id,
 			textBox: textBox,
 		})
 }
 
-func (fr *FontRenderer) Remove(id uint64) {
+func (fr *FontRenderer) Remove(id uuid.UUID) {
 	var del = -1
 	for index, e := range fr.textBoxes {
 		if id == e.id {

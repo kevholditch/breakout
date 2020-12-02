@@ -2,8 +2,8 @@ package game
 
 import (
 	"fmt"
+	"github.com/kevholditch/breakout/internal/pkg/ecs"
 
-	"github.com/EngoEngine/ecs"
 	"runtime"
 	"time"
 
@@ -40,27 +40,34 @@ func Run() error {
 
 	barHeight := 50
 
-	world := ecs.World{}
+	world := ecs.NewWorld()
 	player := NewPlayer()
-	ball := NewBall()
-	hud := NewHud(barHeight, WindowDimensions{
-		Width:  width,
-		Height: height,
-	})
-
+	//ball := NewBall()
+	//hud := NewHud(barHeight, WindowDimensions{
+	//	Width:  width,
+	//	Height: height,
+	//})
+	//
 	playingSpace := NewPlayingSpace(width, height-barHeight)
-	world.AddSystem(NewFrameRateSystem())
+	//world.AddSystem(NewFrameRateSystem())
 	renderSystem := NewRenderSystem(NewWindowSize(width, height))
-	renderSystem.Add(&player.BasicEntity, player.RenderComponent)
-	renderSystem.Add(&ball.BasicEntity, ball.RenderComponent)
-	renderSystem.Add(&hud.BasicEntity, hud.RenderComponent)
+	world.AddEntity(player)
+
+	levelFactory := NewLevelFactory(playingSpace)
+	blocks := levelFactory.NewLevel()
+	for _, block := range blocks {
+		world.AddEntity(block)
+	}
+	//	renderSystem.Add(&player.BasicEntity, player.RenderComponent)
+	//renderSystem.Add(&ball.BasicEntity, ball.RenderComponent)
+	//renderSystem.Add(&hud.BasicEntity, hud.RenderComponent)
 
 	world.AddSystem(renderSystem)
-	world.AddSystem(NewPlayerMovementSystem(playingSpace).Add(&player.BasicEntity, player.MoveComponent))
-	world.AddSystem(NewPlayerInputSystem(w.OnKeyPress, player.MoveComponent, player.StateComponent, ball.BallPhysicsComponent))
-	world.AddSystem(NewLevelSystem(playingSpace))
-
-	world.AddSystem(NewBallPhysicsSystem(player.RenderComponent.Quad, player.StateComponent, playingSpace, ball.BallPhysicsComponent))
+	//world.AddSystem(NewPlayerMovementSystem(playingSpace).Add(&player.BasicEntity, player.MoveComponent))
+	world.AddSystem(NewPlayerInputSystem(w.OnKeyPress))
+	//world.AddSystem(NewLevelSystem(playingSpace))
+	//
+	//world.AddSystem(NewBallPhysicsSystem(player.RenderComponent.Quad, player.StateComponent, playingSpace, ball.BallPhysicsComponent))
 
 	last := time.Now()
 
