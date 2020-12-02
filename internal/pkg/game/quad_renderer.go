@@ -3,18 +3,21 @@ package game
 import (
 	"github.com/go-gl/gl/all-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
-	"github.com/google/uuid"
+	"github.com/kevholditch/breakout/internal/pkg/ecs"
 	"github.com/kevholditch/breakout/internal/pkg/game/components"
 	"github.com/kevholditch/breakout/internal/pkg/game/primitives"
 	"github.com/kevholditch/breakout/internal/pkg/render"
 )
 
-type QuadRenderer struct {
-	quads []struct {
-		id       uuid.UUID
-		quad     *primitives.Quad
-		position *components.PositionedComponent
-	}
+type quadEntity struct {
+	base       *ecs.Entity
+	position   *components.PositionedComponent
+	dimensions *components.DimensionComponent
+	colour     *components.ColouredComponent
+}
+
+type QuadRendererSystem struct {
+	quads            []quadEntity
 	buffer           []float32
 	vertexBuffer     *render.VertexBuffer
 	vertexArray      *render.VertexArray
@@ -23,45 +26,26 @@ type QuadRenderer struct {
 	generator        *TriangleIndexBufferGenerator
 }
 
-func NewQuadRenderer(projectionMatrix mgl32.Mat4) *QuadRenderer {
-	return &QuadRenderer{quads: []struct {
-		id       uuid.UUID
-		quad     *primitives.Quad
-		position *components.PositionedComponent
-	}{},
+func NewQuadRenderSystem(windowSize WindowSize) *QuadRendererSystem {
+	return &QuadRendererSystem{quads: []quadEntity{},
 		buffer:           []float32{},
 		program:          primitives.NewQuadShaderProgramOrPanic(),
-		projectionMatrix: projectionMatrix,
+		projectionMatrix: mgl32.Ortho(0, windowSize.Width, 0, windowSize.Height, -1.0, 1.0),
 		generator:        NewTriangleIndexBufferGenerator(),
 	}
 }
 
-func (qr *QuadRenderer) Add(id uuid.UUID, quad *primitives.Quad, position *components.PositionedComponent) {
-	qr.quads = append(qr.quads,
-		struct {
-			id       uuid.UUID
-			quad     *primitives.Quad
-			position *components.PositionedComponent
-		}{
-			id:       id,
-			quad:     quad,
-			position: position,
-		})
+func (qr *QuadRendererSystem) New(*ecs.World) {
+	render.UseDefaultBlending()
+	gl.ClearColor(colourDarkNavy.R, colourDarkNavy.G, colourDarkNavy.B, colourDarkNavy.A)
 }
 
-func (qr *QuadRenderer) ComputeBuffer(q *primitives.Quad, position *components.PositionedComponent) []float32 {
-	return []float32{
-		position.X, position.Y, q.Colour.X(), q.Colour.Y(), q.Colour.Z(), q.Colour.W(),
-		position.X + q.Width, position.Y, q.Colour.X(), q.Colour.Y(), q.Colour.Z(), q.Colour.W(),
-		position.X + q.Width, position.Y + q.Height, q.Colour.X(), q.Colour.Y(), q.Colour.Z(), q.Colour.W(),
-		position.X, position.Y + q.Height, q.Colour.X(), q.Colour.Y(), q.Colour.Z(), q.Colour.W(),
-	}
-}
+func (qr *QuadRendererSystem) Update(float32) {
+	gl.Clear(gl.COLOR_BUFFER_BIT)
 
-func (qr *QuadRenderer) Render() {
 	var buffer []float32
-	for _, q := range qr.quads {
-		buffer = append(buffer, qr.ComputeBuffer(q.quad, q.position)...)
+	for _, quad := range qr.quads {
+		buffer = append(buffer, qr.ComputeBuffer(quad.position, quad.dimensions, quad.colour)...)
 	}
 	render.NewVertexArray().
 		AddBuffer(
@@ -74,15 +58,44 @@ func (qr *QuadRenderer) Render() {
 
 }
 
-func (qr *QuadRenderer) Remove(id uuid.UUID) {
+func (qr *QuadRendererSystem) ComputeBuffer(position *components.PositionedComponent, dimensions *components.DimensionComponent, colour *components.ColouredComponent) []float32 {
+	return []float32{
+		position.X, position.Y, colour.Colour.R, colour.Colour.G, colour.Colour.B, colour.Colour.A,
+		position.X + dimensions.Width, position.Y, colour.Colour.R, colour.Colour.G, colour.Colour.B, colour.Colour.A,
+		position.X + dimensions.Width, position.Y + dimensions.Height, colour.Colour.R, colour.Colour.G, colour.Colour.B, colour.Colour.A,
+		position.X, position.Y + dimensions.Height, colour.Colour.R, colour.Colour.G, colour.Colour.B, colour.Colour.A,
+	}
+}
+
+func (qr *QuadRendererSystem) Add(entity *ecs.Entity) {
+
+	qr.quads = append(qr.quads, quadEntity{
+		base:       entity,
+		position:   entity.Component(components.IsPositioned).(*components.PositionedComponent),
+		dimensions: entity.Component(components.HasDimensions).(*components.DimensionComponent),
+		colour:     entity.Component(components.IsColoured).(*components.ColouredComponent),
+	})
+}
+
+func (qr *QuadRendererSystem) Remove(basic *ecs.Entity) {
 	var del = -1
 	for index, e := range qr.quads {
-		if id == e.id {
+		if e.base.ID() == basic.ID() {
 			del = index
 			break
 		}
 	}
 	if del >= 0 {
 		qr.quads = append(qr.quads[:del], qr.quads[del+1:]...)
+	}
+
+}
+
+func (qr *QuadRendererSystem) RequiredTypes() []interface{} {
+	return []interface{}{
+		components.IsColoured,
+		components.IsPositioned,
+		components.HasDimensions,
+		components.IsQuad,
 	}
 }

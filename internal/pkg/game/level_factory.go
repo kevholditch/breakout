@@ -14,9 +14,11 @@ type LevelFactory struct {
 func NewBlockEntity(x, y, w, h float32, colour primitives.Colour) *ecs.Entity {
 
 	block := ecs.NewEntity()
-	quad := primitives.NewQuadWithColour(w, h, colour)
-	block.Add(components.NewRenderComponent(quad))
+
+	block.Add(components.NewDimensionsComponent(w, h))
+	block.Add(components.NewColouredComponent(colour))
 	block.Add(components.NewPositionedComponent(x, y))
+	block.Add(components.NewQuadComponent())
 
 	return block
 }

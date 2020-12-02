@@ -50,7 +50,7 @@ func Run() error {
 	//
 	playingSpace := NewPlayingSpace(width, height-barHeight)
 	//world.AddSystem(NewFrameRateSystem())
-	renderSystem := NewRenderSystem(NewWindowSize(width, height))
+	renderSystem := NewQuadRenderSystem(NewWindowSize(width, height))
 	world.AddEntity(player)
 
 	levelFactory := NewLevelFactory(playingSpace)

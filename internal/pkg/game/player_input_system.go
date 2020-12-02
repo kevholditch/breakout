@@ -12,7 +12,7 @@ type PlayerInputSystem struct {
 
 type controllableEntity struct {
 	base                 *ecs.Entity
-	controlComponent     *SpeedControlComponent
+	controlComponent     *components.SpeedControlComponent
 	playerStateComponent *components.PlayerStateComponent
 }
 
@@ -27,7 +27,7 @@ func NewPlayerInputSystem(subscribe func(func(int), func(int))) *PlayerInputSyst
 
 func (m *PlayerInputSystem) Add(entity *ecs.Entity) {
 
-	controlComponent := entity.Component(IsSpeedControllable).(*SpeedControlComponent)
+	controlComponent := entity.Component(components.IsSpeedControllable).(*components.SpeedControlComponent)
 	playerStateComponent := entity.Component(components.HasPlayingState).(*components.PlayerStateComponent)
 	m.entities = append(m.entities, controllableEntity{
 		base:                 entity,
@@ -75,5 +75,5 @@ func (m *PlayerInputSystem) Remove(entity *ecs.Entity) {
 }
 
 func (m *PlayerInputSystem) RequiredTypes() []interface{} {
-	return []interface{}{IsSpeedControllable, components.HasPlayingState}
+	return []interface{}{components.IsSpeedControllable, components.HasPlayingState}
 }

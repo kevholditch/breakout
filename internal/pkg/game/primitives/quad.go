@@ -2,26 +2,8 @@ package primitives
 
 import (
 	"github.com/go-gl/gl/all-core/gl"
-	"github.com/go-gl/mathgl/mgl32"
 	"github.com/kevholditch/breakout/internal/pkg/render"
 )
-
-type Quad struct {
-	Width, Height float32
-	Colour        mgl32.Vec4
-}
-
-func NewQuad(w, h, r, g, b, a float32) *Quad {
-	return &Quad{
-		Width:  w,
-		Height: h,
-		Colour: [4]float32{r, g, b, a},
-	}
-}
-
-func NewQuadWithColour(w, h float32, c Colour) *Quad {
-	return NewQuad(w, h, c.R, c.G, c.B, c.A)
-}
 
 func NewQuadShaderProgramOrPanic() *render.Program {
 	program, err := NewQuadShaderProgram()

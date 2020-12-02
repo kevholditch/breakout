@@ -3,35 +3,20 @@ package game
 import (
 	"github.com/kevholditch/breakout/internal/pkg/ecs"
 	"github.com/kevholditch/breakout/internal/pkg/game/components"
-	"github.com/kevholditch/breakout/internal/pkg/game/primitives"
 )
-
-//
-//type PlayerEntity struct {
-//	ecs.BasicEntity
-//	RenderComponent *RenderComponent
-//	MoveComponent   *LateralMoveComponent
-//	StateComponent  *PlayerStateComponent
-//}
 
 func NewPlayer() *ecs.Entity {
 
-	playerQuad := primitives.NewQuadWithColour(200, 30, colourWhite)
-
 	player := ecs.NewEntity()
 
-	player.Add(components.NewRenderComponent(playerQuad))
-	player.Add(components.NewPlayerStateComponent())
-	player.Add(NewControlComponent(0))
+	player.Add(components.NewDimensionsComponent(200, 30))
+	player.Add(components.NewColouredComponent(colourWhite))
 	player.Add(components.NewPositionedComponent(200, 20))
+	player.Add(components.NewQuadComponent())
+
+	player.Add(components.NewPlayerStateComponent())
+	player.Add(components.NewControlComponent(0))
 
 	return player
-
-	//return &PlayerEntity{
-	//	BasicEntity:     ecs.NewBasic(),
-	//	RenderComponent: NewRenderComponent(playerQuad),
-	//	MoveComponent:   NewLateralMoveComponent(playerQuad, 0.0),
-	//	StateComponent:  NewPlayerStateComponent(),
-	//}
 
 }
