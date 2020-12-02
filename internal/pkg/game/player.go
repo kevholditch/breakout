@@ -3,6 +3,7 @@ package game
 import (
 	"github.com/kevholditch/breakout/internal/pkg/ecs"
 	"github.com/kevholditch/breakout/internal/pkg/game/components"
+	"github.com/kevholditch/breakout/internal/pkg/game/primitives"
 )
 
 //
@@ -15,7 +16,7 @@ import (
 
 func NewPlayer() *ecs.Entity {
 
-	playerQuad := components.NewQuadWithColour(200, 30, colourWhite)
+	playerQuad := primitives.NewQuadWithColour(200, 30, colourWhite)
 
 	player := ecs.NewEntity()
 

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"github.com/gobuffalo/packr"
 	"github.com/google/uuid"
-	"github.com/kevholditch/breakout/internal/pkg/game/components"
+	"github.com/kevholditch/breakout/internal/pkg/game/primitives"
 	"github.com/liamg/aminal/glfont"
 )
 
@@ -12,7 +12,7 @@ type FontRenderer struct {
 	font      *glfont.Font
 	textBoxes []struct {
 		id      uuid.UUID
-		textBox *components.TextBox
+		textBox *primitives.TextBox
 	}
 }
 
@@ -37,11 +37,11 @@ func (fr *FontRenderer) Render() {
 	}
 }
 
-func (fr *FontRenderer) Add(id uuid.UUID, textBox *components.TextBox) {
+func (fr *FontRenderer) Add(id uuid.UUID, textBox *primitives.TextBox) {
 	fr.textBoxes = append(fr.textBoxes,
 		struct {
 			id      uuid.UUID
-			textBox *components.TextBox
+			textBox *primitives.TextBox
 		}{
 			id:      id,
 			textBox: textBox,

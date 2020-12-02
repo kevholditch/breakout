@@ -3,7 +3,7 @@ package game
 import (
 	"github.com/EngoEngine/ecs"
 	"github.com/go-gl/mathgl/mgl32"
-	"github.com/kevholditch/breakout/internal/pkg/game/components"
+	"github.com/kevholditch/breakout/internal/pkg/game/primitives"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -25,7 +25,7 @@ func Test_PlayerMovementSystem(t *testing.T) {
 			name: "zero movement",
 			testEntity: testMoveEntity{
 				ecs.NewBasic(),
-				NewLateralMoveComponent(components.NewQuad(10, 20, 100, 50, 0, 0, 0, 0), 0),
+				NewLateralMoveComponent(primitives.NewQuad(10, 20, 100, 50, 0, 0, 0, 0), 0),
 			},
 			expectedPosition: [4]float32{10, 20, 110, 70},
 			expectedSpeed:    0,
@@ -34,7 +34,7 @@ func Test_PlayerMovementSystem(t *testing.T) {
 			name: "negative speed moves left",
 			testEntity: testMoveEntity{
 				ecs.NewBasic(),
-				NewLateralMoveComponent(components.NewQuad(10, 20, 100, 50, 0, 0, 0, 0), -10),
+				NewLateralMoveComponent(primitives.NewQuad(10, 20, 100, 50, 0, 0, 0, 0), -10),
 			},
 			expectedPosition: [4]float32{0, 20, 100, 70},
 			expectedSpeed:    -10,
@@ -43,7 +43,7 @@ func Test_PlayerMovementSystem(t *testing.T) {
 			name: "positive speed moves right",
 			testEntity: testMoveEntity{
 				ecs.NewBasic(),
-				NewLateralMoveComponent(components.NewQuad(10, 20, 100, 50, 0, 0, 0, 0), 10),
+				NewLateralMoveComponent(primitives.NewQuad(10, 20, 100, 50, 0, 0, 0, 0), 10),
 			},
 			expectedPosition: [4]float32{20, 20, 120, 70},
 			expectedSpeed:    10,
@@ -52,7 +52,7 @@ func Test_PlayerMovementSystem(t *testing.T) {
 			name: "negative speed does does not go below zero",
 			testEntity: testMoveEntity{
 				ecs.NewBasic(),
-				NewLateralMoveComponent(components.NewQuad(0, 20, 100, 50, 0, 0, 0, 0), -10),
+				NewLateralMoveComponent(primitives.NewQuad(0, 20, 100, 50, 0, 0, 0, 0), -10),
 			},
 			expectedPosition: [4]float32{0, 20, 100, 70},
 			expectedSpeed:    0,
@@ -61,7 +61,7 @@ func Test_PlayerMovementSystem(t *testing.T) {
 			name: "positive speed does does not go beyond screen",
 			testEntity: testMoveEntity{
 				ecs.NewBasic(),
-				NewLateralMoveComponent(components.NewQuad(695, 20, 100, 50, 0, 0, 0, 0), 10),
+				NewLateralMoveComponent(primitives.NewQuad(695, 20, 100, 50, 0, 0, 0, 0), 10),
 			},
 			expectedPosition: [4]float32{700, 20, 800, 70},
 			expectedSpeed:    0,

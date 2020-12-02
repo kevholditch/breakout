@@ -3,6 +3,7 @@ package game
 import (
 	"github.com/kevholditch/breakout/internal/pkg/ecs"
 	"github.com/kevholditch/breakout/internal/pkg/game/components"
+	"github.com/kevholditch/breakout/internal/pkg/game/primitives"
 )
 
 type LevelFactory struct {
@@ -10,10 +11,10 @@ type LevelFactory struct {
 	blocks       []*ecs.Entity
 }
 
-func NewBlockEntity(x, y, w, h float32, colour components.Colour) *ecs.Entity {
+func NewBlockEntity(x, y, w, h float32, colour primitives.Colour) *ecs.Entity {
 
 	block := ecs.NewEntity()
-	quad := components.NewQuadWithColour(w, h, colour)
+	quad := primitives.NewQuadWithColour(w, h, colour)
 	block.Add(components.NewRenderComponent(quad))
 	block.Add(components.NewPositionedComponent(x, y))
 

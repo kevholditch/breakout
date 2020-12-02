@@ -4,14 +4,14 @@ import (
 	"github.com/go-gl/gl/all-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/google/uuid"
-	"github.com/kevholditch/breakout/internal/pkg/game/components"
+	"github.com/kevholditch/breakout/internal/pkg/game/primitives"
 	"github.com/kevholditch/breakout/internal/pkg/render"
 )
 
 type CircleRenderer struct {
 	circles []struct {
 		id     uuid.UUID
-		circle *components.Circle
+		circle *primitives.Circle
 	}
 	buffer           []float32
 	vertexBuffer     *render.VertexBuffer
@@ -23,20 +23,20 @@ type CircleRenderer struct {
 func NewCircleRenderer(projectionMatrix mgl32.Mat4) *CircleRenderer {
 	return &CircleRenderer{circles: []struct {
 		id     uuid.UUID
-		circle *components.Circle
+		circle *primitives.Circle
 	}{},
 		buffer:           []float32{},
-		program:          components.NewCircleShaderProgramOrPanic(),
+		program:          primitives.NewCircleShaderProgramOrPanic(),
 		projectionMatrix: projectionMatrix,
 	}
 
 }
 
-func (cr *CircleRenderer) Add(id uuid.UUID, circle *components.Circle) {
+func (cr *CircleRenderer) Add(id uuid.UUID, circle *primitives.Circle) {
 	cr.circles = append(cr.circles,
 		struct {
 			id     uuid.UUID
-			circle *components.Circle
+			circle *primitives.Circle
 		}{
 			id:     id,
 			circle: circle,

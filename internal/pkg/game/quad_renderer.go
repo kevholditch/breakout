@@ -5,13 +5,14 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/google/uuid"
 	"github.com/kevholditch/breakout/internal/pkg/game/components"
+	"github.com/kevholditch/breakout/internal/pkg/game/primitives"
 	"github.com/kevholditch/breakout/internal/pkg/render"
 )
 
 type QuadRenderer struct {
 	quads []struct {
 		id       uuid.UUID
-		quad     *components.Quad
+		quad     *primitives.Quad
 		position *components.PositionedComponent
 	}
 	buffer           []float32
@@ -25,21 +26,21 @@ type QuadRenderer struct {
 func NewQuadRenderer(projectionMatrix mgl32.Mat4) *QuadRenderer {
 	return &QuadRenderer{quads: []struct {
 		id       uuid.UUID
-		quad     *components.Quad
+		quad     *primitives.Quad
 		position *components.PositionedComponent
 	}{},
 		buffer:           []float32{},
-		program:          components.NewQuadShaderProgramOrPanic(),
+		program:          primitives.NewQuadShaderProgramOrPanic(),
 		projectionMatrix: projectionMatrix,
 		generator:        NewTriangleIndexBufferGenerator(),
 	}
 }
 
-func (qr *QuadRenderer) Add(id uuid.UUID, quad *components.Quad, position *components.PositionedComponent) {
+func (qr *QuadRenderer) Add(id uuid.UUID, quad *primitives.Quad, position *components.PositionedComponent) {
 	qr.quads = append(qr.quads,
 		struct {
 			id       uuid.UUID
-			quad     *components.Quad
+			quad     *primitives.Quad
 			position *components.PositionedComponent
 		}{
 			id:       id,
@@ -48,7 +49,7 @@ func (qr *QuadRenderer) Add(id uuid.UUID, quad *components.Quad, position *compo
 		})
 }
 
-func (qr *QuadRenderer) ComputeBuffer(q *components.Quad, position *components.PositionedComponent) []float32 {
+func (qr *QuadRenderer) ComputeBuffer(q *primitives.Quad, position *components.PositionedComponent) []float32 {
 	return []float32{
 		position.X, position.Y, q.Colour.X(), q.Colour.Y(), q.Colour.Z(), q.Colour.W(),
 		position.X + q.Width, position.Y, q.Colour.X(), q.Colour.Y(), q.Colour.Z(), q.Colour.W(),

@@ -1,4 +1,4 @@
-package components
+package primitives
 
 import (
 	"github.com/go-gl/gl/all-core/gl"
