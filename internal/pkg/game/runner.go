@@ -63,7 +63,7 @@ func Run() error {
 	//renderSystem.Add(&hud.BasicEntity, hud.RenderComponent)
 
 	world.AddSystem(renderSystem)
-	//world.AddSystem(NewPlayerMovementSystem(playingSpace).Add(&player.BasicEntity, player.MoveComponent))
+	world.AddSystem(NewPlayerMovementSystem(playingSpace))
 	world.AddSystem(NewPlayerInputSystem(w.OnKeyPress))
 	//world.AddSystem(NewLevelSystem(playingSpace))
 	//
