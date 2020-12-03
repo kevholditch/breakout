@@ -7,17 +7,21 @@ import (
 
 type PlayerInputSystem struct {
 	subscribe func(func(int))
+	gameState *GameState
 	entities  []controllableEntity
+	world     *ecs.World
 }
 
 type controllableEntity struct {
-	base             *ecs.Entity
-	controlComponent *components.SpeedControlComponent
+	base         *ecs.Entity
+	speed        *components.SpeedComponent
+	controllable *components.ControlComponent
 }
 
-func NewPlayerInputSystem(subscribe func(func(int))) *PlayerInputSystem {
+func NewPlayerInputSystem(subscribe func(func(int)), state *GameState) *PlayerInputSystem {
 	p := &PlayerInputSystem{
 		subscribe: subscribe,
+		gameState: state,
 		entities:  []controllableEntity{},
 	}
 	p.subscribe(p.handleKeyPress)
@@ -25,23 +29,50 @@ func NewPlayerInputSystem(subscribe func(func(int))) *PlayerInputSystem {
 	return p
 }
 
+func (m *PlayerInputSystem) New(world *ecs.World) {
+	m.world = world
+}
+
 func (m *PlayerInputSystem) handleKeyPress(key int) {
+	// space
+	if key == 32 && m.gameState.State == Kickoff {
+		m.gameState.State = Playing
+		var ballEntities []struct {
+			base         *ecs.Entity
+			controllable *components.ControlComponent
+		}
+
+		for _, e := range m.entities {
+			if e.base.Component(components.IsCircle) != nil {
+				e.speed.Speed[0] = 0.5
+				e.speed.Speed[1] = 0.5
+				ballEntities = append(ballEntities, struct {
+					base         *ecs.Entity
+					controllable *components.ControlComponent
+				}{
+					base:         e.base,
+					controllable: e.controllable,
+				})
+			}
+		}
+		for _, ballEntity := range ballEntities {
+			m.world.RemoveComponentFromEntity(ballEntity.controllable, ballEntity.base)
+		}
+	}
 
 	for _, e := range m.entities {
 		switch key {
-		//case 32: space
-
 		case 263:
-			if e.controlComponent.Speed[0] > 0 {
-				e.controlComponent.Speed[0] = 0
+			if e.speed.Speed[0] > 0 {
+				e.speed.Speed[0] = 0
 			} else {
-				e.controlComponent.Speed[0] -= 1.0
+				e.speed.Speed[0] -= 1.0
 			}
 		case 262:
-			if e.controlComponent.Speed[0] < 0 {
-				e.controlComponent.Speed[0] = 0
+			if e.speed.Speed[0] < 0 {
+				e.speed.Speed[0] = 0
 			} else {
-				e.controlComponent.Speed[0] += 1.0
+				e.speed.Speed[0] += 1.0
 			}
 		}
 	}
@@ -50,10 +81,11 @@ func (m *PlayerInputSystem) handleKeyPress(key int) {
 
 func (m *PlayerInputSystem) Add(entity *ecs.Entity) {
 
-	controlComponent := entity.Component(components.IsSpeedControllable).(*components.SpeedControlComponent)
+	controlComponent := entity.Component(components.HasSpeed).(*components.SpeedComponent)
 	m.entities = append(m.entities, controllableEntity{
-		base:             entity,
-		controlComponent: controlComponent,
+		base:         entity,
+		speed:        controlComponent,
+		controllable: entity.Component(components.IsControllable).(*components.ControlComponent),
 	})
 
 }
@@ -74,5 +106,8 @@ func (m *PlayerInputSystem) Remove(entity *ecs.Entity) {
 }
 
 func (m *PlayerInputSystem) RequiredTypes() []interface{} {
-	return []interface{}{components.IsSpeedControllable}
+	return []interface{}{
+		components.HasSpeed,
+		components.IsControllable,
+	}
 }

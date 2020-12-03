@@ -1,157 +1,169 @@
 package game
 
-//
-//import (
-//	"github.com/EngoEngine/ecs"
-//)
-//
-//type BallPhysicsSystem struct {
-//	playerQuad           *Quad
-//	playerStateComponent *PlayerStateComponent
-//	ballPhysicsComponent *BallPhysicsComponent
-//	playingSpace         PlayingSpace
-//	world                *ecs.World
-//	entities             []struct {
-//		*ecs.BasicEntity
-//		renderComponent *RenderComponent
-//	}
-//}
-//
-//func NewBallPhysicsSystem(playerQuad *Quad, playerStateComponent *PlayerStateComponent, playingSpace PlayingSpace, ballPhysicsComponent *BallPhysicsComponent) *BallPhysicsSystem {
-//	return &BallPhysicsSystem{
-//		playerQuad:           playerQuad,
-//		playerStateComponent: playerStateComponent,
-//		ballPhysicsComponent: ballPhysicsComponent,
-//		playingSpace:         playingSpace,
-//		entities: []struct {
-//			*ecs.BasicEntity
-//			renderComponent *RenderComponent
-//		}{}}
-//}
-//
-//func (b *BallPhysicsSystem) New(world *ecs.World) {
-//	b.world = world
-//}
-//
-//func (b *BallPhysicsSystem) Add(entity *ecs.BasicEntity, renderComponent *RenderComponent) {
-//	b.entities = append(b.entities, struct {
-//		*ecs.BasicEntity
-//		renderComponent *RenderComponent
-//	}{entity, renderComponent})
-//}
-//
-//func (b *BallPhysicsSystem) Update(dt float32) {
-//
-//	switch b.playerStateComponent.State {
-//	case Kickoff:
-//		{
-//			b.ballPhysicsComponent.Circle.Position[0] = b.playerQuad.Position.X() + (b.playerQuad.Width() / 4)
-//			b.ballPhysicsComponent.Circle.Position[1] = b.playerQuad.Position.W() + 14
-//		}
-//	case Playing:
-//		{
-//			ballMove := [2]float32{dt * b.ballPhysicsComponent.Speed[0], dt * b.ballPhysicsComponent.Speed[1]}
-//			b.ballPhysicsComponent.Circle.Position = b.ballPhysicsComponent.Circle.Position.Add(ballMove)
-//
-//			circle := b.ballPhysicsComponent.Circle
-//
-//			// if going left then check left side of screen
-//			if b.ballPhysicsComponent.Speed[0] < 0 && circle.LeftMost() <= 0 {
-//				b.ballPhysicsComponent.Speed[0] = b.ballPhysicsComponent.Speed[0] * -1
-//			}
-//			if b.ballPhysicsComponent.Speed[0] > 0 && circle.RightMost() >= b.playingSpace.Width {
-//				b.ballPhysicsComponent.Speed[0] = b.ballPhysicsComponent.Speed[0] * -1
-//			}
-//			if b.ballPhysicsComponent.Speed[1] > 0 && circle.UpperMost() >= b.playingSpace.Height {
-//				b.ballPhysicsComponent.Speed[1] = b.ballPhysicsComponent.Speed[1] * -1
-//			}
-//			if circle.LowerMost() <= 0 {
-//				b.playerStateComponent.State = Kickoff
-//			}
-//
-//			// check if we hit player if ball is going downwards
-//			if b.ballPhysicsComponent.Speed[1] < 0 {
-//
-//				if circle.LowerMost() <= b.playerQuad.Position.W() &&
-//					circle.LowerMost() >= b.playerQuad.Position.Y() &&
-//					circle.Position.X() >= b.playerQuad.Position.X() &&
-//					circle.Position.X() <= b.playerQuad.Position.Z() {
-//					b.ballPhysicsComponent.Speed[1] = b.ballPhysicsComponent.Speed[1] * -1
-//				}
-//			}
-//
-//			entitiesToRemove := []ecs.BasicEntity{}
-//
-//			for _, block := range b.entities {
-//				q := block.renderComponent.Quad
-//				blockHit := false
-//
-//				// if ball going down
-//				if b.ballPhysicsComponent.Speed[1] < 0 {
-//					if circle.LowerMost() <= q.Position.W() &&
-//						circle.LowerMost() >= q.Position.Y() &&
-//						circle.Position.X() >= q.Position.X() &&
-//						circle.Position.X() <= q.Position.Z() {
-//						b.ballPhysicsComponent.Speed[1] = b.ballPhysicsComponent.Speed[1] * -1
-//						blockHit = true
-//					}
-//				}
-//				// if ball going right
-//				if b.ballPhysicsComponent.Speed[0] > 0 {
-//					if circle.RightMost() <= q.Position.Z() &&
-//						circle.RightMost() >= q.Position.X() &&
-//						circle.Position.Y() >= q.Position.Y() &&
-//						circle.Position.Y() <= q.Position.W() {
-//						b.ballPhysicsComponent.Speed[0] = b.ballPhysicsComponent.Speed[0] * -1
-//						blockHit = true
-//					}
-//				}
-//
-//				// if ball going up
-//				if b.ballPhysicsComponent.Speed[1] > 0 {
-//					if circle.UpperMost() <= q.Position.W() &&
-//						circle.UpperMost() >= q.Position.Y() &&
-//						circle.Position.X() >= q.Position.X() &&
-//						circle.Position.X() <= q.Position.Z() {
-//						b.ballPhysicsComponent.Speed[1] = b.ballPhysicsComponent.Speed[1] * -1
-//						blockHit = true
-//					}
-//				}
-//
-//				// if ball going left
-//				if b.ballPhysicsComponent.Speed[0] < 0 {
-//					if circle.LeftMost() <= q.Position.Z() &&
-//						circle.LeftMost() >= q.Position.X() &&
-//						circle.Position.Y() >= q.Position.Y() &&
-//						circle.Position.Y() <= q.Position.W() {
-//						b.ballPhysicsComponent.Speed[0] = b.ballPhysicsComponent.Speed[0] * -1
-//						blockHit = true
-//					}
-//				}
-//
-//				if blockHit {
-//					entitiesToRemove = append(entitiesToRemove, *block.GetBasicEntity())
-//				}
-//			}
-//
-//			for _, entity := range entitiesToRemove {
-//				b.world.RemoveEntity(entity)
-//			}
-//
-//		}
-//	}
-//
-//}
-//
-//func (b *BallPhysicsSystem) Remove(basic ecs.BasicEntity) {
-//	var del = -1
-//	for index, e := range b.entities {
-//		if e.GetBasicEntity().ID() == basic.ID() {
-//			del = index
-//			break
-//		}
-//	}
-//	if del >= 0 {
-//		b.entities = append(b.entities[:del], b.entities[del+1:]...)
-//	}
-//}
+import (
+	"github.com/kevholditch/breakout/internal/pkg/ecs"
+	"github.com/kevholditch/breakout/internal/pkg/game/components"
+)
+
+type BallPhysicsSystem struct {
+	playerPosition   *components.PositionedComponent
+	playerDimensions *components.DimensionComponent
+	playingSpace     PlayingSpace
+	world            *ecs.World
+	entities         []ballPhysicsEntity
+	levelSystem      *LevelSystem
+	gameState        *GameState
+}
+
+type ballPhysicsEntity struct {
+	base     *ecs.Entity
+	position *components.PositionedComponent
+	circle   *components.CircleComponent
+	speed    *components.SpeedComponent
+}
+
+func NewBallPhysicsSystem(playerPosition *components.PositionedComponent, playerDimensions *components.DimensionComponent, playingSpace PlayingSpace, levelSystem *LevelSystem, state *GameState) *BallPhysicsSystem {
+	return &BallPhysicsSystem{
+		playerPosition:   playerPosition,
+		playerDimensions: playerDimensions,
+		playingSpace:     playingSpace,
+		levelSystem:      levelSystem,
+		gameState:        state,
+		entities:         []ballPhysicsEntity{},
+	}
+}
+
+func (b *BallPhysicsSystem) New(world *ecs.World) {
+	b.world = world
+}
+
+func (b *BallPhysicsSystem) Add(entity *ecs.Entity) {
+	b.entities = append(b.entities, ballPhysicsEntity{
+		base:     entity,
+		position: entity.Component(components.IsPositioned).(*components.PositionedComponent),
+		circle:   entity.Component(components.IsCircle).(*components.CircleComponent),
+		speed:    entity.Component(components.HasSpeed).(*components.SpeedComponent),
+	})
+}
+
+func (b *BallPhysicsSystem) Update(dt float32) {
+
+	entitiesToRemove := []*ecs.Entity{}
+
+	playerW := b.playerPosition.Y + b.playerDimensions.Height
+	playerZ := b.playerPosition.X + b.playerDimensions.Width
+
+	for _, ball := range b.entities {
+		ballMove := [2]float32{dt * ball.speed.Speed[0], dt * ball.speed.Speed[1]}
+		ball.position.X += ballMove[0]
+		ball.position.Y += ballMove[1]
+
+		// if going left then check left side of screen
+		if ball.speed.Speed[0] < 0 && (ball.position.X-ball.circle.Radius) <= 0 {
+			ball.speed.Speed[0] = ball.speed.Speed[0] * -1
+		}
+		if ball.speed.Speed[0] > 0 && (ball.position.X+ball.circle.Radius) >= b.playingSpace.Width {
+			ball.speed.Speed[0] = ball.speed.Speed[0] * -1
+		}
+		if ball.speed.Speed[1] > 0 && (ball.position.Y+ball.circle.Radius) >= b.playingSpace.Height {
+			ball.speed.Speed[1] = ball.speed.Speed[1] * -1
+		}
+		if (ball.position.Y - ball.circle.Radius) <= 0 {
+			b.gameState.State = Kickoff
+			return
+		}
+
+		// check if we hit player if ball is going downwards
+		if ball.speed.Speed[1] < 0 {
+			if (ball.position.Y-ball.circle.Radius) <= playerW &&
+				(ball.position.Y-ball.circle.Radius) >= b.playerPosition.Y &&
+				ball.position.X >= b.playerPosition.X &&
+				ball.position.X <= playerZ {
+				ball.speed.Speed[1] = ball.speed.Speed[1] * -1
+			}
+		}
+
+		for _, block := range b.levelSystem.GetBlocks() {
+
+			blockHit := false
+
+			blockW := block.position.Y + block.dimensions.Height
+			blockZ := block.position.X + block.dimensions.Width
+			// if ball going down
+			if ball.speed.Speed[1] < 0 {
+				if (ball.position.Y-ball.circle.Radius) <= blockW &&
+					(ball.position.Y-ball.circle.Radius) >= blockZ &&
+					ball.position.X >= block.position.X &&
+					ball.position.X <= blockZ {
+					ball.speed.Speed[1] = ball.speed.Speed[1] * -1
+					blockHit = true
+				}
+			}
+			// if ball going right
+			if ball.speed.Speed[0] > 0 {
+				if (ball.position.X+ball.circle.Radius) <= blockZ &&
+					(ball.position.X+ball.circle.Radius) >= block.position.X &&
+					ball.position.Y >= blockZ &&
+					ball.position.Y <= blockW {
+					ball.speed.Speed[0] = ball.speed.Speed[0] * -1
+					blockHit = true
+				}
+			}
+
+			// if ball going up
+			if ball.speed.Speed[1] > 0 {
+				if (ball.position.Y+ball.circle.Radius) <= blockW &&
+					(ball.position.Y+ball.circle.Radius) >= blockZ &&
+					ball.position.X >= block.position.X &&
+					ball.position.X <= blockZ {
+					ball.speed.Speed[1] = ball.speed.Speed[1] * -1
+					blockHit = true
+				}
+			}
+
+			// if ball going left
+			if ball.speed.Speed[0] < 0 {
+				if (ball.position.X-ball.circle.Radius) <= blockZ &&
+					(ball.position.X-ball.circle.Radius) >= block.position.X &&
+					ball.position.Y >= blockZ &&
+					ball.position.Y <= blockW {
+					ball.speed.Speed[0] = ball.speed.Speed[0] * -1
+					blockHit = true
+				}
+			}
+
+			if blockHit {
+				entitiesToRemove = append(entitiesToRemove, block.base)
+			}
+		}
+	}
+
+	for _, entity := range entitiesToRemove {
+		b.world.RemoveEntity(entity)
+	}
+
+}
+
+func (b *BallPhysicsSystem) Remove(entity *ecs.Entity) {
+	var del = -1
+	for index, e := range b.entities {
+		if e.base.ID() == entity.ID() {
+			del = index
+			break
+		}
+	}
+	if del >= 0 {
+		b.entities = append(b.entities[:del], b.entities[del+1:]...)
+	}
+
+}
+
+func (b *BallPhysicsSystem) RequiredTypes() []interface{} {
+	return []interface{}{
+		components.IsPositioned,
+		components.HasBallPhysics,
+		components.HasDimensions,
+		components.HasSpeed,
+		components.IsCircle,
+	}
+}

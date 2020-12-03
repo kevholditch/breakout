@@ -3,6 +3,7 @@ package game
 import (
 	"fmt"
 	"github.com/kevholditch/breakout/internal/pkg/ecs"
+	"github.com/kevholditch/breakout/internal/pkg/game/components"
 
 	"runtime"
 	"time"
@@ -60,16 +61,23 @@ func Run() error {
 		world.AddEntity(block)
 	}
 
-	//	renderSystem.Add(&player.BasicEntity, player.RenderComponent)
-	//renderSystem.Add(&ball.BasicEntity, ball.RenderComponent)
-	//renderSystem.Add(&hud.BasicEntity, hud.RenderComponent)
+	gameState := NewGameState()
 
 	world.AddSystem(NewQuadRenderSystem(NewWindowSize(width, height)))
 	world.AddSystem(NewCircleRenderSystem(NewWindowSize(width, height)))
 	world.AddSystem(NewLateralMovementSystem(playingSpace))
-	world.AddSystem(NewPlayerInputSystem(w.OnKeyPress))
-	//world.AddSystem(NewLevelSystem(playingSpace))
-	//
+	world.AddSystem(NewPlayerInputSystem(w.OnKeyPress, gameState))
+
+	levelSystem := NewLevelSystem()
+	world.AddSystem(levelSystem)
+	ballPhysicsSystem := NewBallPhysicsSystem(
+		player.Component(components.IsPositioned).(*components.PositionedComponent),
+		player.Component(components.HasDimensions).(*components.DimensionComponent),
+		playingSpace,
+		levelSystem,
+		gameState)
+	world.AddSystem(ballPhysicsSystem)
+
 	//world.AddSystem(NewBallPhysicsSystem(player.RenderComponent.Quad, player.StateComponent, playingSpace, ball.BallPhysicsComponent))
 
 	last := time.Now()

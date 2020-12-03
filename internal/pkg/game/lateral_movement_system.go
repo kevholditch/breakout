@@ -13,7 +13,7 @@ type LateralMovementSystem struct {
 
 type laterallyMovableEntity struct {
 	base       *ecs.Entity
-	speed      *components.SpeedControlComponent
+	speed      *components.SpeedComponent
 	position   *components.PositionedComponent
 	dimensions *components.DimensionComponent
 }
@@ -31,7 +31,7 @@ func (m *LateralMovementSystem) Add(entity *ecs.Entity) {
 	m.entities = append(m.entities,
 		laterallyMovableEntity{
 			base:       entity,
-			speed:      entity.Component(components.IsSpeedControllable).(*components.SpeedControlComponent),
+			speed:      entity.Component(components.HasSpeed).(*components.SpeedComponent),
 			position:   entity.Component(components.IsPositioned).(*components.PositionedComponent),
 			dimensions: dimensions,
 		})
@@ -80,7 +80,7 @@ func (m *LateralMovementSystem) Remove(basic *ecs.Entity) {
 
 func (m *LateralMovementSystem) RequiredTypes() []interface{} {
 	return []interface{}{
-		components.IsSpeedControllable,
+		components.HasSpeed,
 		components.IsPositioned,
 		components.HasDimensions,
 	}

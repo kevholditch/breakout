@@ -19,6 +19,7 @@ func NewBlockEntity(x, y, w, h float32, colour primitives.Colour) *ecs.Entity {
 	block.Add(components.NewColouredComponent(colour))
 	block.Add(components.NewPositionedComponent(x, y))
 	block.Add(components.NewQuadComponent())
+	block.Add(components.NewBlockComponent())
 
 	return block
 }
