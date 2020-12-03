@@ -1,7 +1,7 @@
 package game
 
 import (
-	"github.com/kevholditch/breakout/internal/pkg/ecs"
+	"github.com/liamg/ecs"
 	"github.com/kevholditch/breakout/internal/pkg/game/components"
 	"github.com/kevholditch/breakout/internal/pkg/game/primitives"
 )

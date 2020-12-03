@@ -42,6 +42,8 @@ github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANyt
 github.com/joho/godotenv v1.3.0 h1:Zjp+RcGpHhGlrMbJzXTrZZPrWj+1vfm90La1wgB6Bhc=
 github.com/joho/godotenv v1.3.0/go.mod h1:7hK45KPybAkOC6peb+G5yklZfMxEjkZhHbwpqxOKXbg=
 github.com/karrick/godirwalk v1.10.12/go.mod h1:RoGL9dQei4vP9ilrpETWE8CLOZ1kiN0LhBygSwrAsHA=
+github.com/kevholditch/ecs v0.0.0-20201203214025-839a859dfde4 h1:xNLm75tpy9tY8KMQSEq5SuN3RJaGsohcBAyfVGUkzn0=
+github.com/kevholditch/ecs v0.0.0-20201203214025-839a859dfde4/go.mod h1:z2VzIciohBE3BykLDfmOy8O8EqcsP7BMCOjh8+/YZQ0=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/konsorten/go-windows-terminal-sequences v1.0.2/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/kr/pretty v0.1.0 h1:L/CwN0zerZDmRFUapSPitk6f+Q3+0za1rQkzVuMiMFI=
@@ -52,6 +54,8 @@ github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
 github.com/liamg/aminal v0.9.0 h1:0mLmvBYQUIX3fO9zoOY/PBEb+HW5Jcu3aexD+ioEtc0=
 github.com/liamg/aminal v0.9.0/go.mod h1:pH1C6kiJT6E7efV+C4YbH6M7UI7S3Cy4Af9JYcv4ceo=
+github.com/liamg/ecs v0.0.0-20201202165607-5fc05cb4c803 h1:DTA3ViNWuw1iFpEzPcqmvrgJF9NyRVALacTc8luoef4=
+github.com/liamg/ecs v0.0.0-20201202165607-5fc05cb4c803/go.mod h1:z2VzIciohBE3BykLDfmOy8O8EqcsP7BMCOjh8+/YZQ0=
 github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/markbates/pkger v0.17.1 h1:/MKEtWqtc0mZvu9OinB9UzVN9iYCwLWuyUv4Bw+PCno=
 github.com/markbates/pkger v0.17.1/go.mod h1:0JoVlrol20BSywW79rN3kdFFsE5xYM+rSCQDXbLhiuI=

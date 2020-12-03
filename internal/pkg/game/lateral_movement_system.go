@@ -1,8 +1,8 @@
 package game
 
 import (
-	"github.com/kevholditch/breakout/internal/pkg/ecs"
 	"github.com/kevholditch/breakout/internal/pkg/game/components"
+	"github.com/liamg/ecs"
 )
 
 type LateralMovementSystem struct {

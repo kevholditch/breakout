@@ -15,7 +15,10 @@ require (
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/google/uuid v1.1.2
 	github.com/liamg/aminal v0.9.0
+	github.com/liamg/ecs v0.0.0-20201202165607-5fc05cb4c803
 	github.com/markbates/pkger v0.17.1 // indirect
 	github.com/rogpeppe/go-internal v1.6.2 // indirect
 	github.com/stretchr/testify v1.6.1
 )
+
+replace github.com/liamg/ecs v0.0.0-20201202165607-5fc05cb4c803 => github.com/kevholditch/ecs v0.0.0-20201203214025-839a859dfde4

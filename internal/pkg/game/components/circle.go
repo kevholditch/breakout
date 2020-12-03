@@ -1,7 +1,7 @@
 package components
 
 import (
-	"github.com/kevholditch/breakout/internal/pkg/ecs"
+	"github.com/liamg/ecs"
 	"math"
 )
 

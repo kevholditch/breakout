@@ -1,6 +1,6 @@
 package components
 
-import "github.com/kevholditch/breakout/internal/pkg/ecs"
+import "github.com/liamg/ecs"
 
 var IsQuad *Quad
 

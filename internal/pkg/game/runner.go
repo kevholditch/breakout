@@ -2,8 +2,8 @@ package game
 
 import (
 	"fmt"
-	"github.com/kevholditch/breakout/internal/pkg/ecs"
 	"github.com/kevholditch/breakout/internal/pkg/game/components"
+	"github.com/liamg/ecs"
 
 	"runtime"
 	"time"

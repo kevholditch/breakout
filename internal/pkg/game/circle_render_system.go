@@ -3,10 +3,10 @@ package game
 import (
 	"github.com/go-gl/gl/all-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
-	"github.com/kevholditch/breakout/internal/pkg/ecs"
 	"github.com/kevholditch/breakout/internal/pkg/game/components"
 	"github.com/kevholditch/breakout/internal/pkg/game/primitives"
 	"github.com/kevholditch/breakout/internal/pkg/render"
+	"github.com/liamg/ecs"
 )
 
 type circleEntity struct {
