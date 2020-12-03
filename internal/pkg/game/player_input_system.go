@@ -57,6 +57,7 @@ func (m *PlayerInputSystem) handleKeyPress(key int) {
 		}
 		for _, ballEntity := range ballEntities {
 			m.world.RemoveComponentFromEntity(ballEntity.controllable, ballEntity.base)
+			m.world.AddComponentToEntity(components.NewBallPhysicsComponent(), ballEntity.base)
 		}
 	}
 
