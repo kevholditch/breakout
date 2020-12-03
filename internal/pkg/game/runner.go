@@ -70,15 +70,13 @@ func Run() error {
 
 	levelSystem := NewLevelSystem()
 	world.AddSystem(levelSystem)
-	ballPhysicsSystem := NewBallPhysicsSystem(
+
+	world.AddSystem(NewBallPhysicsSystem(
 		player.Component(components.IsPositioned).(*components.PositionedComponent),
 		player.Component(components.HasDimensions).(*components.DimensionComponent),
 		playingSpace,
 		levelSystem,
-		gameState)
-	world.AddSystem(ballPhysicsSystem)
-
-	//world.AddSystem(NewBallPhysicsSystem(player.RenderComponent.Quad, player.StateComponent, playingSpace, ball.BallPhysicsComponent))
+		gameState))
 
 	last := time.Now()
 
