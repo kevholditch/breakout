@@ -33,7 +33,7 @@ func NewBall() *ecs.Entity {
 
 	ball.Add(components.NewDimensionsComponent(12, 12))
 	ball.Add(components.NewColouredComponent(colourCoral))
-	ball.Add(components.NewPositionedComponent(300, 62))
+	ball.Add(components.NewPositionedComponent(200, 62))
 	ball.Add(components.NewCircleComponent(12))
 	ball.Add(components.NewControlComponent([2]float32{0, 0}))
 
