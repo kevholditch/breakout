@@ -20,6 +20,7 @@ type ballPhysicsEntity struct {
 	position *components.PositionedComponent
 	circle   *components.CircleComponent
 	speed    *components.SpeedComponent
+	physics  *components.BallPhysicsComponent
 }
 
 func NewBallPhysicsSystem(playerPosition *components.PositionedComponent, playerDimensions *components.DimensionComponent, playingSpace PlayingSpace, levelSystem *LevelSystem, state *GameState) *BallPhysicsSystem {
@@ -43,6 +44,7 @@ func (b *BallPhysicsSystem) Add(entity *ecs.Entity) {
 		position: entity.Component(components.IsPositioned).(*components.PositionedComponent),
 		circle:   entity.Component(components.IsCircle).(*components.CircleComponent),
 		speed:    entity.Component(components.HasSpeed).(*components.SpeedComponent),
+		physics:  entity.Component(components.HasBallPhysics).(*components.BallPhysicsComponent),
 	})
 }
 
@@ -52,6 +54,8 @@ func (b *BallPhysicsSystem) Update(dt float32) {
 
 	playerW := b.playerPosition.Y + b.playerDimensions.Height
 	playerZ := b.playerPosition.X + b.playerDimensions.Width
+
+	ballsLost := []ballPhysicsEntity{}
 
 	for _, ball := range b.entities {
 		ballMove := [2]float32{dt * ball.speed.Speed[0], dt * ball.speed.Speed[1]}
@@ -69,8 +73,7 @@ func (b *BallPhysicsSystem) Update(dt float32) {
 			ball.speed.Speed[1] = ball.speed.Speed[1] * -1
 		}
 		if (ball.position.Y - ball.circle.Radius) <= 0 {
-			b.gameState.State = Kickoff
-			return
+			ballsLost = append(ballsLost, ball)
 		}
 
 		// check if we hit player if ball is going downwards
@@ -140,6 +143,15 @@ func (b *BallPhysicsSystem) Update(dt float32) {
 
 	for _, entity := range entitiesToRemove {
 		b.world.RemoveEntity(entity)
+	}
+
+	for _, lostBall := range ballsLost {
+		b.gameState.State = Kickoff
+		lostBall.position.X = b.playerPosition.X
+		lostBall.position.Y = 62
+		lostBall.speed.Speed = [2]float32{0, 0}
+		b.world.RemoveComponentFromEntity(lostBall.physics, lostBall.base)
+		b.world.AddComponentToEntity(components.NewControlComponent(), lostBall.base)
 	}
 
 }

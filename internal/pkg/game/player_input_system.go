@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	"github.com/kevholditch/breakout/internal/pkg/ecs"
 	"github.com/kevholditch/breakout/internal/pkg/game/components"
 )
@@ -55,7 +54,6 @@ func (m *PlayerInputSystem) handleKeyPress(key int) {
 	}
 
 	if key == 32 && m.gameState.State == Kickoff {
-		fmt.Printf("in here\n")
 		m.gameState.State = Playing
 		var ballEntities []struct {
 			base         *ecs.Entity
