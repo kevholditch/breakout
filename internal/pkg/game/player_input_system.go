@@ -6,57 +6,56 @@ import (
 )
 
 type PlayerInputSystem struct {
-	subscribe func(func(int), func(int))
+	subscribe func(func(int))
 	entities  []controllableEntity
 }
 
 type controllableEntity struct {
-	base                 *ecs.Entity
-	controlComponent     *components.SpeedControlComponent
-	playerStateComponent *components.PlayerStateComponent
+	base             *ecs.Entity
+	controlComponent *components.SpeedControlComponent
 }
 
-func NewPlayerInputSystem(subscribe func(func(int), func(int))) *PlayerInputSystem {
+func NewPlayerInputSystem(subscribe func(func(int))) *PlayerInputSystem {
 	p := &PlayerInputSystem{
 		subscribe: subscribe,
 		entities:  []controllableEntity{},
 	}
+	p.subscribe(p.handleKeyPress)
 
 	return p
+}
+
+func (m *PlayerInputSystem) handleKeyPress(key int) {
+
+	for _, e := range m.entities {
+		switch key {
+		//case 32: space
+
+		case 263:
+			if e.controlComponent.Speed[0] > 0 {
+				e.controlComponent.Speed[0] = 0
+			} else {
+				e.controlComponent.Speed[0] -= 1.0
+			}
+		case 262:
+			if e.controlComponent.Speed[0] < 0 {
+				e.controlComponent.Speed[0] = 0
+			} else {
+				e.controlComponent.Speed[0] += 1.0
+			}
+		}
+	}
+
 }
 
 func (m *PlayerInputSystem) Add(entity *ecs.Entity) {
 
 	controlComponent := entity.Component(components.IsSpeedControllable).(*components.SpeedControlComponent)
-	playerStateComponent := entity.Component(components.HasPlayingState).(*components.PlayerStateComponent)
 	m.entities = append(m.entities, controllableEntity{
-		base:                 entity,
-		controlComponent:     controlComponent,
-		playerStateComponent: playerStateComponent,
+		base:             entity,
+		controlComponent: controlComponent,
 	})
-	m.subscribe(func(key int) {
-		switch key {
-		case 32:
-			if playerStateComponent.State == components.Kickoff {
-				playerStateComponent.State = components.Playing
-				//ballPhysicsComponent.Speed = [2]float32{0.5, 0.5}
-			}
-		case 263:
-			if controlComponent.Speed > 0 {
-				controlComponent.Speed = 0
-			} else {
-				controlComponent.Speed -= 1.0
-			}
-		case 262:
-			if controlComponent.Speed < 0 {
-				controlComponent.Speed = 0
-			} else {
-				controlComponent.Speed += 1.0
-			}
-		}
-	}, func(key int) {
 
-	})
 }
 
 func (m *PlayerInputSystem) Update(elapsed float32) {}
@@ -75,5 +74,5 @@ func (m *PlayerInputSystem) Remove(entity *ecs.Entity) {
 }
 
 func (m *PlayerInputSystem) RequiredTypes() []interface{} {
-	return []interface{}{components.IsSpeedControllable, components.HasPlayingState}
+	return []interface{}{components.IsSpeedControllable}
 }

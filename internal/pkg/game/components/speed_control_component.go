@@ -1,5 +1,7 @@
 package components
 
+import "github.com/go-gl/mathgl/mgl32"
+
 var IsSpeedControllable *SpeedControllable
 
 type SpeedControllable interface {
@@ -7,10 +9,10 @@ type SpeedControllable interface {
 }
 
 type SpeedControlComponent struct {
-	Speed float32
+	Speed mgl32.Vec2
 }
 
-func NewControlComponent(initialSpeed float32) *SpeedControlComponent {
+func NewControlComponent(initialSpeed mgl32.Vec2) *SpeedControlComponent {
 	return &SpeedControlComponent{Speed: initialSpeed}
 }
 

@@ -1,5 +1,10 @@
 package game
 
+import (
+	"github.com/kevholditch/breakout/internal/pkg/ecs"
+	"github.com/kevholditch/breakout/internal/pkg/game/components"
+)
+
 //
 //import "github.com/kevholditch/breakout/internal/pkg/ecs"
 //
@@ -21,3 +26,17 @@ package game
 //		BallPhysicsComponent: NewBallPhysicsComponent([2]float32{0, 0}, ballCircle),
 //	}
 //}
+
+func NewBall() *ecs.Entity {
+
+	ball := ecs.NewEntity()
+
+	ball.Add(components.NewDimensionsComponent(12, 12))
+	ball.Add(components.NewColouredComponent(colourCoral))
+	ball.Add(components.NewPositionedComponent(300, 62))
+	ball.Add(components.NewCircleComponent(12))
+	ball.Add(components.NewControlComponent([2]float32{0, 0}))
+
+	return ball
+
+}

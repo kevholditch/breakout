@@ -15,7 +15,7 @@ func NewPlayer() *ecs.Entity {
 	player.Add(components.NewQuadComponent())
 
 	player.Add(components.NewPlayerStateComponent())
-	player.Add(components.NewControlComponent(0))
+	player.Add(components.NewControlComponent([2]float32{0, 0}))
 
 	return player
 

@@ -42,7 +42,7 @@ func Run() error {
 
 	world := ecs.NewWorld()
 	player := NewPlayer()
-	//ball := NewBall()
+	ball := NewBall()
 	//hud := NewHud(barHeight, WindowDimensions{
 	//	Width:  width,
 	//	Height: height,
@@ -50,20 +50,23 @@ func Run() error {
 	//
 	playingSpace := NewPlayingSpace(width, height-barHeight)
 	//world.AddSystem(NewFrameRateSystem())
-	renderSystem := NewQuadRenderSystem(NewWindowSize(width, height))
+
 	world.AddEntity(player)
+	world.AddEntity(ball)
 
 	levelFactory := NewLevelFactory(playingSpace)
 	blocks := levelFactory.NewLevel()
 	for _, block := range blocks {
 		world.AddEntity(block)
 	}
+
 	//	renderSystem.Add(&player.BasicEntity, player.RenderComponent)
 	//renderSystem.Add(&ball.BasicEntity, ball.RenderComponent)
 	//renderSystem.Add(&hud.BasicEntity, hud.RenderComponent)
 
-	world.AddSystem(renderSystem)
-	world.AddSystem(NewPlayerMovementSystem(playingSpace))
+	world.AddSystem(NewQuadRenderSystem(NewWindowSize(width, height)))
+	world.AddSystem(NewCircleRenderSystem(NewWindowSize(width, height)))
+	world.AddSystem(NewLateralMovementSystem(playingSpace))
 	world.AddSystem(NewPlayerInputSystem(w.OnKeyPress))
 	//world.AddSystem(NewLevelSystem(playingSpace))
 	//

@@ -77,10 +77,10 @@ func (qr *QuadRendererSystem) Add(entity *ecs.Entity) {
 	})
 }
 
-func (qr *QuadRendererSystem) Remove(basic *ecs.Entity) {
+func (qr *QuadRendererSystem) Remove(entity *ecs.Entity) {
 	var del = -1
 	for index, e := range qr.quads {
-		if e.base.ID() == basic.ID() {
+		if e.base.ID() == entity.ID() {
 			del = index
 			break
 		}

@@ -5,8 +5,9 @@ import (
 	"github.com/kevholditch/breakout/internal/pkg/game/components"
 )
 
-type PlayerMovementSystem struct {
+type LateralMovementSystem struct {
 	playingSpace PlayingSpace
+	maxWidth     float32
 	entities     []laterallyMovableEntity
 }
 
@@ -17,39 +18,46 @@ type laterallyMovableEntity struct {
 	dimensions *components.DimensionComponent
 }
 
-func NewPlayerMovementSystem(space PlayingSpace) *PlayerMovementSystem {
-	return &PlayerMovementSystem{
+func NewLateralMovementSystem(space PlayingSpace) *LateralMovementSystem {
+	return &LateralMovementSystem{
+		maxWidth:     0,
 		playingSpace: space,
 		entities:     []laterallyMovableEntity{},
 	}
 }
 
-func (m *PlayerMovementSystem) Add(entity *ecs.Entity) {
+func (m *LateralMovementSystem) Add(entity *ecs.Entity) {
+	dimensions := entity.Component(components.HasDimensions).(*components.DimensionComponent)
 	m.entities = append(m.entities,
 		laterallyMovableEntity{
 			base:       entity,
 			speed:      entity.Component(components.IsSpeedControllable).(*components.SpeedControlComponent),
 			position:   entity.Component(components.IsPositioned).(*components.PositionedComponent),
-			dimensions: entity.Component(components.HasDimensions).(*components.DimensionComponent),
+			dimensions: dimensions,
 		})
+
+	if dimensions.Width >= m.maxWidth {
+		m.maxWidth = dimensions.Width
+	}
+
 }
 
-func (m *PlayerMovementSystem) Update(dt float32) {
+func (m *LateralMovementSystem) Update(dt float32) {
 	for _, e := range m.entities {
-		moveAmount := dt * e.speed.Speed
+		moveAmount := e.speed.Speed[0] * dt
 		if e.position.X+moveAmount < 0 {
 			e.position.X = 0
-			e.speed.Speed = 0
-		} else if e.position.X+moveAmount+e.dimensions.Width > m.playingSpace.Width {
-			e.position.X = m.playingSpace.Width - e.dimensions.Width
-			e.speed.Speed = 0
+			e.speed.Speed[0] = 0
+		} else if e.position.X+moveAmount+m.maxWidth > m.playingSpace.Width {
+			e.position.X = m.playingSpace.Width - m.maxWidth
+			e.speed.Speed[0] = 0
 		} else {
 			e.position.X += moveAmount
 		}
 	}
 }
 
-func (m *PlayerMovementSystem) Remove(basic *ecs.Entity) {
+func (m *LateralMovementSystem) Remove(basic *ecs.Entity) {
 	var del = -1
 	for index, e := range m.entities {
 		if e.base.ID() == basic.ID() {
@@ -61,9 +69,16 @@ func (m *PlayerMovementSystem) Remove(basic *ecs.Entity) {
 		m.entities = append(m.entities[:del], m.entities[del+1:]...)
 	}
 
+	m.maxWidth = 0
+	for _, e := range m.entities {
+		if e.dimensions.Width >= m.maxWidth {
+			m.maxWidth = e.dimensions.Width
+		}
+	}
+
 }
 
-func (m *PlayerMovementSystem) RequiredTypes() []interface{} {
+func (m *LateralMovementSystem) RequiredTypes() []interface{} {
 	return []interface{}{
 		components.IsSpeedControllable,
 		components.IsPositioned,

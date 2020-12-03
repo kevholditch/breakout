@@ -10,7 +10,7 @@ package game
 //	width          float32
 //	height         float32
 //	entities       []renderEntityHolder
-//	circleRenderer *CircleRenderer
+//	circleRenderer *CircleRenderSystem
 //	quadRenderer   *QuadRenderer
 //	fontRenderer   *FontRenderer
 //	renderers      []Renderer
@@ -24,7 +24,7 @@ package game
 //
 //func NewRenderSystem(windowSize WindowSize) *RenderSystem {
 //	proj := mgl32.Ortho(0, windowSize.Width, 0, windowSize.Height, -1.0, 1.0)
-//	circleRenderer := NewCircleRenderer(proj)
+//	circleRenderer := NewCircleRenderSystem(proj)
 //	quadRenderer := NewQuadRenderer(proj)
 //	fontRenderer := NewFontRenderer(windowSize)
 //

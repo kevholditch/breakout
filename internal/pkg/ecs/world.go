@@ -49,6 +49,7 @@ func (w *World) AddSystem(system System) {
 			var found bool
 			for _, c := range e.Store.components {
 				found = reflect.TypeOf(c.Inner).Implements(t)
+				//fmt.Printf("%v implements %v = %v\n", reflect.TypeOf(c.Inner).Name(), t.Name(), found)
 				if found {
 					break
 				}
