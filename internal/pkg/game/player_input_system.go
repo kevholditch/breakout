@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"github.com/kevholditch/breakout/internal/pkg/ecs"
 	"github.com/kevholditch/breakout/internal/pkg/game/components"
 )
@@ -34,8 +35,27 @@ func (m *PlayerInputSystem) New(world *ecs.World) {
 }
 
 func (m *PlayerInputSystem) handleKeyPress(key int) {
-	// space
+
+	for _, e := range m.entities {
+
+		switch key {
+		case 263:
+			if e.speed.Speed[0] > 0 {
+				e.speed.Speed[0] = 0
+			} else {
+				e.speed.Speed[0] -= 1.0
+			}
+		case 262:
+			if e.speed.Speed[0] < 0 {
+				e.speed.Speed[0] = 0
+			} else {
+				e.speed.Speed[0] += 1.0
+			}
+		}
+	}
+
 	if key == 32 && m.gameState.State == Kickoff {
+		fmt.Printf("in here\n")
 		m.gameState.State = Playing
 		var ballEntities []struct {
 			base         *ecs.Entity
@@ -60,24 +80,6 @@ func (m *PlayerInputSystem) handleKeyPress(key int) {
 			m.world.AddComponentToEntity(components.NewBallPhysicsComponent(), ballEntity.base)
 		}
 	}
-
-	for _, e := range m.entities {
-		switch key {
-		case 263:
-			if e.speed.Speed[0] > 0 {
-				e.speed.Speed[0] = 0
-			} else {
-				e.speed.Speed[0] -= 1.0
-			}
-		case 262:
-			if e.speed.Speed[0] < 0 {
-				e.speed.Speed[0] = 0
-			} else {
-				e.speed.Speed[0] += 1.0
-			}
-		}
-	}
-
 }
 
 func (m *PlayerInputSystem) Add(entity *ecs.Entity) {

@@ -83,5 +83,6 @@ func (m *LateralMovementSystem) RequiredTypes() []interface{} {
 		components.HasSpeed,
 		components.IsPositioned,
 		components.HasDimensions,
+		components.IsControllable,
 	}
 }
