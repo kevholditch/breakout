@@ -10,11 +10,15 @@ import (
 
 func Test_BallPhysicsSystem(t *testing.T) {
 	testCases := []struct {
-		name                 string
-		blocks               []*ecs.Entity
-		gameState            *GameState
-		playerPosition       *components.PositionedComponent
-		playerDimensions     *components.DimensionComponent
+		name      string
+		blocks    []*ecs.Entity
+		gameState int
+		player    struct {
+			X      float32
+			Y      float32
+			Width  float32
+			Height float32
+		}
 		ballPosition         *components.PositionedComponent
 		ballDimensions       *components.DimensionComponent
 		ballSpeed            *components.SpeedComponent
@@ -22,11 +26,15 @@ func Test_BallPhysicsSystem(t *testing.T) {
 		expectedBallSpeed    mgl32.Vec2
 	}{
 		{
-			name:                 "ball going left and hits left side of screen",
-			blocks:               []*ecs.Entity{},
-			playerPosition:       components.NewPositionedComponent(100, 40),
-			playerDimensions:     components.NewDimensionsComponent(100, 20),
-			gameState:            NewGameState(),
+			name:   "ball going left and hits left side of screen",
+			blocks: []*ecs.Entity{},
+			player: struct {
+				X      float32
+				Y      float32
+				Width  float32
+				Height float32
+			}{X: 100, Y: 400, Width: 100, Height: 20},
+			gameState:            Kickoff,
 			ballSpeed:            components.NewSpeedComponent([2]float32{-1, 0}),
 			ballPosition:         components.NewPositionedComponent(1, 300),
 			ballDimensions:       components.NewDimensionsComponent(10, 10),
@@ -196,7 +204,10 @@ func Test_BallPhysicsSystem(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			levelSystem := NewLevelSystem()
-			system := NewBallPhysicsSystem(tc.playerPosition, tc.playerDimensions, NewPlayingSpace(800, 600), levelSystem, tc.gameState)
+			gameState := NewGameState()
+			gameState.State = tc.gameState
+			system := NewBallPhysicsSystem(components.NewPositionedComponent(tc.player.X, tc.player.Y), components.NewDimensionsComponent(tc.player.Width, tc.player.Height),
+				NewPlayingSpace(800, 600), levelSystem, gameState)
 			system.New(&ecs.World{})
 
 			ball := ecs.NewEntity()
@@ -205,6 +216,8 @@ func Test_BallPhysicsSystem(t *testing.T) {
 			ball.Add(tc.ballSpeed)
 			ball.Add(components.NewBallPhysicsComponent())
 			ball.Add(components.NewCircleComponent(10))
+
+			system.Add(ball)
 
 			for _, b := range tc.blocks {
 				levelSystem.Add(b)
