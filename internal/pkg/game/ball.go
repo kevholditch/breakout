@@ -6,15 +6,12 @@ import (
 )
 
 func NewBall() *ecs.Entity {
-
-	ball := ecs.NewEntity()
-
-	ball.Add(components.NewDimensionsComponent(12, 12))
-	ball.Add(components.NewColouredComponent(colourCoral))
-	ball.Add(components.NewPositionedComponent(200, 62))
-	ball.Add(components.NewCircleComponent(12))
-	ball.Add(components.NewSpeedComponent([2]float32{0, 0}))
-	ball.Add(components.NewControlComponent())
-
-	return ball
+	return components.NewEntityBuilder().
+		WithDimensions(12, 12).
+		WithColour(colourCoral).
+		WithPosition(200, 62).
+		IsCircle(12).
+		WithSpeed(0, 0).
+		MakeControllable().
+		Build()
 }

@@ -1,9 +1,9 @@
 package game
 
 import (
-	"github.com/liamg/ecs"
 	"github.com/kevholditch/breakout/internal/pkg/game/components"
 	"github.com/kevholditch/breakout/internal/pkg/game/primitives"
+	"github.com/liamg/ecs"
 )
 
 type LevelFactory struct {
