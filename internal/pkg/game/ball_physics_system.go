@@ -65,9 +65,11 @@ func (b *BallPhysicsSystem) Update(dt float32) {
 		// if going left then check left side of screen
 		if ball.speed.Speed[0] < 0 && (ball.position.X-ball.circle.Radius) <= 0 {
 			ball.speed.Speed[0] = ball.speed.Speed[0] * -1
+			ball.position.X = ball.circle.Radius
 		}
 		if ball.speed.Speed[0] > 0 && (ball.position.X+ball.circle.Radius) >= b.playingSpace.Width {
 			ball.speed.Speed[0] = ball.speed.Speed[0] * -1
+			ball.position.X = b.playingSpace.Width - ball.circle.Radius
 		}
 		if ball.speed.Speed[1] > 0 && (ball.position.Y+ball.circle.Radius) >= b.playingSpace.Height {
 			ball.speed.Speed[1] = ball.speed.Speed[1] * -1
@@ -100,21 +102,18 @@ func (b *BallPhysicsSystem) Update(dt float32) {
 					ball.position.X <= blockZ {
 					ball.speed.Speed[1] = ball.speed.Speed[1] * -1
 					blockHit = true
+
 				}
-			}
-			// if ball going right
-			if ball.speed.Speed[0] > 0 {
+			} else if ball.speed.Speed[0] > 0 {
 				if (ball.position.X+ball.circle.Radius) <= blockZ &&
 					(ball.position.X+ball.circle.Radius) >= block.position.X &&
 					ball.position.Y <= blockW &&
 					ball.position.Y >= block.position.Y {
 					ball.speed.Speed[0] = ball.speed.Speed[0] * -1
 					blockHit = true
-				}
-			}
 
-			// if ball going up
-			if ball.speed.Speed[1] > 0 {
+				}
+			} else if ball.speed.Speed[1] > 0 {
 				if (ball.position.Y+ball.circle.Radius) <= blockW &&
 					(ball.position.Y+ball.circle.Radius) >= block.position.Y &&
 					ball.position.X >= block.position.X &&
@@ -122,10 +121,7 @@ func (b *BallPhysicsSystem) Update(dt float32) {
 					ball.speed.Speed[1] = ball.speed.Speed[1] * -1
 					blockHit = true
 				}
-			}
-
-			// if ball going left
-			if ball.speed.Speed[0] < 0 {
+			} else if ball.speed.Speed[0] < 0 {
 				if (ball.position.X-ball.circle.Radius) <= blockZ &&
 					(ball.position.X-ball.circle.Radius) >= block.position.X &&
 					ball.position.Y <= blockW &&
