@@ -58,6 +58,8 @@ func (b *BallPhysicsSystem) Update(dt float32) {
 	ballsLost := []ballPhysicsEntity{}
 
 	for _, ball := range b.entities {
+		initialX := ball.position.X
+		//initialY := ball.position.Y
 		ballMove := [2]float32{dt * ball.speed.Speed[0], dt * ball.speed.Speed[1]}
 		ball.position.X += ballMove[0]
 		ball.position.Y += ballMove[1]
@@ -90,7 +92,8 @@ func (b *BallPhysicsSystem) Update(dt float32) {
 
 		for _, block := range b.levelSystem.GetBlocks() {
 
-			blockHit := false
+			verticalHit := false
+			horizontalHit := false
 
 			blockW := block.position.Y + block.dimensions.Height
 			blockZ := block.position.X + block.dimensions.Width
@@ -100,38 +103,49 @@ func (b *BallPhysicsSystem) Update(dt float32) {
 					(ball.position.Y-ball.circle.Radius) >= block.position.Y &&
 					ball.position.X >= block.position.X &&
 					ball.position.X <= blockZ {
-					ball.speed.Speed[1] = ball.speed.Speed[1] * -1
-					blockHit = true
+					verticalHit = true
+					ball.position.Y = blockW + ball.circle.Radius
 
 				}
-			} else if ball.speed.Speed[0] > 0 {
+			}
+
+			if ball.speed.Speed[0] > 0 {
 				if (ball.position.X+ball.circle.Radius) <= blockZ &&
 					(ball.position.X+ball.circle.Radius) >= block.position.X &&
 					ball.position.Y <= blockW &&
 					ball.position.Y >= block.position.Y {
-					ball.speed.Speed[0] = ball.speed.Speed[0] * -1
-					blockHit = true
-
+					horizontalHit = true
 				}
-			} else if ball.speed.Speed[1] > 0 {
+			}
+
+			if ball.speed.Speed[1] > 0 {
 				if (ball.position.Y+ball.circle.Radius) <= blockW &&
 					(ball.position.Y+ball.circle.Radius) >= block.position.Y &&
 					ball.position.X >= block.position.X &&
 					ball.position.X <= blockZ {
-					ball.speed.Speed[1] = ball.speed.Speed[1] * -1
-					blockHit = true
+					verticalHit = true
+					ball.position.Y = block.position.Y
 				}
-			} else if ball.speed.Speed[0] < 0 {
+			}
+
+			if ball.speed.Speed[0] < 0 {
 				if (ball.position.X-ball.circle.Radius) <= blockZ &&
 					(ball.position.X-ball.circle.Radius) >= block.position.X &&
 					ball.position.Y <= blockW &&
 					ball.position.Y >= block.position.Y {
-					ball.speed.Speed[0] = ball.speed.Speed[0] * -1
-					blockHit = true
+					horizontalHit = true
 				}
 			}
 
-			if blockHit {
+			if horizontalHit {
+				ball.speed.Speed[0] = ball.speed.Speed[0] * -1
+			}
+
+			if verticalHit {
+				ball.speed.Speed[1] = ball.speed.Speed[1] * -1
+			}
+
+			if horizontalHit || verticalHit {
 				entitiesToRemove = append(entitiesToRemove, block.base)
 			}
 		}
