@@ -65,21 +65,21 @@ func Test_BallPhysicsSystemScreenBoundaries(t *testing.T) {
 				NewGameState())
 			system.New(&ecs.World{})
 
-			ball := ecs.NewEntity()
-			position := components.NewPositionedComponent(tc.ball.X, tc.ball.Y)
-			ball.Add(position)
-			speed := components.NewSpeedComponent([2]float32{tc.ball.SpeedX, tc.ball.SpeedY})
-			ball.Add(speed)
-			ball.Add(components.NewDimensionsComponent(10, 10))
-			ball.Add(components.NewBallPhysicsComponent())
-			ball.Add(components.NewCircleComponent(10))
+			ballPosition := components.NewPositionedComponent(tc.ball.X, tc.ball.Y)
+			ballSpeed := components.NewSpeedComponent([2]float32{tc.ball.SpeedX, tc.ball.SpeedY})
 
-			system.Add(ball)
+			system.Add(components.NewEntityBuilder().
+				WithComponent(ballPosition).
+				WithComponent(ballSpeed).
+				WithDimensions(10, 10).
+				IsCircle(10).
+				WithBallPhysics().
+				Build())
 
 			system.Update(1)
-			assert.Equal(t, components.NewSpeedComponent([2]float32{tc.expected.SpeedX, tc.expected.SpeedY}), speed)
-			assert.Equal(t, tc.expected.X, position.X)
-			assert.Equal(t, tc.expected.Y, position.Y)
+			assert.Equal(t, components.NewSpeedComponent([2]float32{tc.expected.SpeedX, tc.expected.SpeedY}), ballSpeed)
+			assert.Equal(t, tc.expected.X, ballPosition.X)
+			assert.Equal(t, tc.expected.Y, ballPosition.Y)
 
 		})
 	}
@@ -203,21 +203,21 @@ func Test_BallPhysicsSystemHittingPlayer(t *testing.T) {
 				NewGameState())
 			system.New(&ecs.World{})
 
-			ball := ecs.NewEntity()
-			position := components.NewPositionedComponent(tc.ball.X, tc.ball.Y)
-			ball.Add(position)
-			speed := components.NewSpeedComponent([2]float32{tc.ball.SpeedX, tc.ball.SpeedY})
-			ball.Add(speed)
-			ball.Add(components.NewDimensionsComponent(10, 10))
-			ball.Add(components.NewBallPhysicsComponent())
-			ball.Add(components.NewCircleComponent(10))
+			ballPosition := components.NewPositionedComponent(tc.ball.X, tc.ball.Y)
+			ballSpeed := components.NewSpeedComponent([2]float32{tc.ball.SpeedX, tc.ball.SpeedY})
 
-			system.Add(ball)
+			system.Add(components.NewEntityBuilder().
+				WithComponent(ballPosition).
+				WithComponent(ballSpeed).
+				WithDimensions(10, 10).
+				IsCircle(10).
+				WithBallPhysics().
+				Build())
 
 			system.Update(1)
-			assert.Equal(t, components.NewSpeedComponent([2]float32{tc.expected.SpeedX, tc.expected.SpeedY}), speed)
-			assert.Equal(t, tc.expected.X, position.X)
-			assert.Equal(t, tc.expected.Y, position.Y)
+			assert.Equal(t, components.NewSpeedComponent([2]float32{tc.expected.SpeedX, tc.expected.SpeedY}), ballSpeed)
+			assert.Equal(t, tc.expected.X, ballPosition.X)
+			assert.Equal(t, tc.expected.Y, ballPosition.Y)
 
 		})
 	}
@@ -274,11 +274,11 @@ func Test_BallPhysicsSystemHittingBlock(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			levelSystem := NewLevelSystem()
-			block := ecs.NewEntity()
-			block.Add(components.NewPositionedComponent(tc.block.X, tc.block.Y))
-			block.Add(components.NewDimensionsComponent(tc.block.Width, tc.block.Height))
-			block.Add(components.NewBlockComponent())
-			levelSystem.Add(block)
+			levelSystem.Add(components.NewEntityBuilder().
+				WithPosition(tc.block.X, tc.block.Y).
+				WithDimensions(tc.block.Width, tc.block.Height).
+				IsBlock().
+				Build())
 
 			system := NewBallPhysicsSystem(
 				components.NewPositionedComponent(100, 40),
@@ -288,21 +288,21 @@ func Test_BallPhysicsSystemHittingBlock(t *testing.T) {
 				NewGameState())
 			system.New(&ecs.World{})
 
-			ball := ecs.NewEntity()
-			position := components.NewPositionedComponent(tc.ball.X, tc.ball.Y)
-			ball.Add(position)
-			speed := components.NewSpeedComponent([2]float32{tc.ball.SpeedX, tc.ball.SpeedY})
-			ball.Add(speed)
-			ball.Add(components.NewDimensionsComponent(10, 10))
-			ball.Add(components.NewBallPhysicsComponent())
-			ball.Add(components.NewCircleComponent(10))
+			ballPosition := components.NewPositionedComponent(tc.ball.X, tc.ball.Y)
+			ballSpeed := components.NewSpeedComponent([2]float32{tc.ball.SpeedX, tc.ball.SpeedY})
 
-			system.Add(ball)
+			system.Add(components.NewEntityBuilder().
+				WithComponent(ballPosition).
+				WithComponent(ballSpeed).
+				WithDimensions(10, 10).
+				IsCircle(10).
+				WithBallPhysics().
+				Build())
 
 			system.Update(1)
-			assert.Equal(t, components.NewSpeedComponent([2]float32{tc.expected.SpeedX, tc.expected.SpeedY}), speed)
-			assert.Equal(t, tc.expected.X, position.X)
-			assert.Equal(t, tc.expected.Y, position.Y)
+			assert.Equal(t, components.NewSpeedComponent([2]float32{tc.expected.SpeedX, tc.expected.SpeedY}), ballSpeed)
+			assert.Equal(t, tc.expected.X, ballPosition.X)
+			assert.Equal(t, tc.expected.Y, ballPosition.Y)
 			assert.Equal(t, tc.expected.BlockHit, len(levelSystem.GetBlocks()))
 
 		})
