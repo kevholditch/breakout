@@ -50,118 +50,109 @@ func (b *BallPhysicsSystem) Add(entity *ecs.Entity) {
 
 func (b *BallPhysicsSystem) Update(dt float32) {
 
-	entitiesToRemove := []*ecs.Entity{}
-
 	playerW := b.playerPosition.Y + b.playerDimensions.Height
 	playerZ := b.playerPosition.X + b.playerDimensions.Width
 
-	ballsLost := []ballPhysicsEntity{}
+	for i := float32(0); i < dt; i++ {
+		entitiesToRemove := []*ecs.Entity{}
+		ballsLost := []ballPhysicsEntity{}
 
-	for _, ball := range b.entities {
-		initialX := ball.position.X
-		//initialY := ball.position.Y
-		ballMove := [2]float32{dt * ball.speed.Speed[0], dt * ball.speed.Speed[1]}
-		ball.position.X += ballMove[0]
-		ball.position.Y += ballMove[1]
+		for _, ball := range b.entities {
+			ballMove := [2]float32{ball.speed.Speed[0], ball.speed.Speed[1]}
+			ball.position.X += ballMove[0]
+			ball.position.Y += ballMove[1]
 
-		// if going left then check left side of screen
-		if ball.speed.Speed[0] < 0 && (ball.position.X-ball.circle.Radius) <= 0 {
-			ball.speed.Speed[0] = ball.speed.Speed[0] * -1
-			ball.position.X = ball.circle.Radius
-		}
-		if ball.speed.Speed[0] > 0 && (ball.position.X+ball.circle.Radius) >= b.playingSpace.Width {
-			ball.speed.Speed[0] = ball.speed.Speed[0] * -1
-			ball.position.X = b.playingSpace.Width - ball.circle.Radius
-		}
-		if ball.speed.Speed[1] > 0 && (ball.position.Y+ball.circle.Radius) >= b.playingSpace.Height {
-			ball.speed.Speed[1] = ball.speed.Speed[1] * -1
-		}
-		if (ball.position.Y - ball.circle.Radius) <= 0 {
-			ballsLost = append(ballsLost, ball)
-		}
-
-		// check if we hit player if ball is going downwards
-		if ball.speed.Speed[1] < 0 {
-			if (ball.position.Y-ball.circle.Radius) <= playerW &&
-				(ball.position.Y-ball.circle.Radius) >= b.playerPosition.Y &&
-				ball.position.X >= b.playerPosition.X &&
-				ball.position.X <= playerZ {
-				ball.speed.Speed[1] = ball.speed.Speed[1] * -1
-			}
-		}
-
-		for _, block := range b.levelSystem.GetBlocks() {
-
-			verticalHit := false
-			horizontalHit := false
-
-			blockW := block.position.Y + block.dimensions.Height
-			blockZ := block.position.X + block.dimensions.Width
-			// if ball going down
-			if ball.speed.Speed[1] < 0 {
-				if (ball.position.Y-ball.circle.Radius) <= blockW &&
-					(ball.position.Y-ball.circle.Radius) >= block.position.Y &&
-					ball.position.X >= block.position.X &&
-					ball.position.X <= blockZ {
-					verticalHit = true
-					ball.position.Y = blockW + ball.circle.Radius
-
-				}
-			}
-
-			if ball.speed.Speed[0] > 0 {
-				if (ball.position.X+ball.circle.Radius) <= blockZ &&
-					(ball.position.X+ball.circle.Radius) >= block.position.X &&
-					ball.position.Y <= blockW &&
-					ball.position.Y >= block.position.Y {
-					horizontalHit = true
-				}
-			}
-
-			if ball.speed.Speed[1] > 0 {
-				if (ball.position.Y+ball.circle.Radius) <= blockW &&
-					(ball.position.Y+ball.circle.Radius) >= block.position.Y &&
-					ball.position.X >= block.position.X &&
-					ball.position.X <= blockZ {
-					verticalHit = true
-					ball.position.Y = block.position.Y
-				}
-			}
-
-			if ball.speed.Speed[0] < 0 {
-				if (ball.position.X-ball.circle.Radius) <= blockZ &&
-					(ball.position.X-ball.circle.Radius) >= block.position.X &&
-					ball.position.Y <= blockW &&
-					ball.position.Y >= block.position.Y {
-					horizontalHit = true
-				}
-			}
-
-			if horizontalHit {
+			// if going left then check left side of screen
+			if ball.speed.Speed[0] < 0 && (ball.position.X-ball.circle.Radius) <= 0 {
 				ball.speed.Speed[0] = ball.speed.Speed[0] * -1
+				ball.position.X = ball.circle.Radius
 			}
-
-			if verticalHit {
+			if ball.speed.Speed[0] > 0 && (ball.position.X+ball.circle.Radius) >= b.playingSpace.Width {
+				ball.speed.Speed[0] = ball.speed.Speed[0] * -1
+				ball.position.X = b.playingSpace.Width - ball.circle.Radius
+			}
+			if ball.speed.Speed[1] > 0 && (ball.position.Y+ball.circle.Radius) >= b.playingSpace.Height {
 				ball.speed.Speed[1] = ball.speed.Speed[1] * -1
 			}
+			if (ball.position.Y - ball.circle.Radius) <= 0 {
+				ballsLost = append(ballsLost, ball)
+			}
 
-			if horizontalHit || verticalHit {
-				entitiesToRemove = append(entitiesToRemove, block.base)
+			// check if we hit player if ball is going downwards
+			if ball.speed.Speed[1] < 0 {
+				if (ball.position.Y-ball.circle.Radius) <= playerW &&
+					(ball.position.Y-ball.circle.Radius) >= b.playerPosition.Y &&
+					ball.position.X >= b.playerPosition.X &&
+					ball.position.X <= playerZ {
+					ball.speed.Speed[1] = ball.speed.Speed[1] * -1
+				}
+			}
+
+			for _, block := range b.levelSystem.GetBlocks() {
+
+				ballHit := false
+
+				blockW := block.position.Y + block.dimensions.Height
+				blockZ := block.position.X + block.dimensions.Width
+				// if ball going down
+				if ball.speed.Speed[1] < 0 {
+					if (ball.position.Y-ball.circle.Radius) <= blockW &&
+						(ball.position.Y-ball.circle.Radius) >= block.position.Y &&
+						ball.position.X >= block.position.X &&
+						ball.position.X <= blockZ {
+						ballHit = true
+						ball.speed.Speed[1] = ball.speed.Speed[1] * -1
+					}
+				}
+
+				if ball.speed.Speed[0] > 0 {
+					if (ball.position.X+ball.circle.Radius) <= blockZ &&
+						(ball.position.X+ball.circle.Radius) >= block.position.X &&
+						ball.position.Y <= blockW &&
+						ball.position.Y >= block.position.Y {
+						ball.speed.Speed[0] = ball.speed.Speed[0] * -1
+						ballHit = true
+					}
+				}
+
+				if ball.speed.Speed[1] > 0 {
+					if (ball.position.Y+ball.circle.Radius) <= blockW &&
+						(ball.position.Y+ball.circle.Radius) >= block.position.Y &&
+						ball.position.X >= block.position.X &&
+						ball.position.X <= blockZ {
+						ball.speed.Speed[1] = ball.speed.Speed[1] * -1
+						ballHit = true
+					}
+				}
+
+				if ball.speed.Speed[0] < 0 {
+					if (ball.position.X-ball.circle.Radius) <= blockZ &&
+						(ball.position.X-ball.circle.Radius) >= block.position.X &&
+						ball.position.Y <= blockW &&
+						ball.position.Y >= block.position.Y {
+						ball.speed.Speed[0] = ball.speed.Speed[0] * -1
+						ballHit = true
+					}
+				}
+
+				if ballHit {
+					entitiesToRemove = append(entitiesToRemove, block.base)
+				}
 			}
 		}
-	}
 
-	for _, entity := range entitiesToRemove {
-		b.world.RemoveEntity(entity)
-	}
+		for _, entity := range entitiesToRemove {
+			b.world.RemoveEntity(entity)
+		}
 
-	for _, lostBall := range ballsLost {
-		b.gameState.State = Kickoff
-		lostBall.position.X = b.playerPosition.X
-		lostBall.position.Y = 62
-		lostBall.speed.Speed = [2]float32{0, 0}
-		b.world.RemoveComponentFromEntity(lostBall.physics, lostBall.base)
-		b.world.AddComponentToEntity(components.NewControlComponent(), lostBall.base)
+		for _, lostBall := range ballsLost {
+			b.gameState.State = Kickoff
+			lostBall.position.X = b.playerPosition.X
+			lostBall.position.Y = 62
+			lostBall.speed.Speed = [2]float32{0, 0}
+			b.world.RemoveComponentFromEntity(lostBall.physics, lostBall.base)
+			b.world.AddComponentToEntity(components.NewControlComponent(), lostBall.base)
+		}
 	}
 
 }

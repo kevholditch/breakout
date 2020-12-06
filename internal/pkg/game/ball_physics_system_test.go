@@ -268,7 +268,7 @@ func Test_BallPhysicsSystemHittingBlock(t *testing.T) {
 				SpeedX   float32
 				SpeedY   float32
 				BlockHit int
-			}{X: 450, Y: 510, SpeedX: 0, SpeedY: 1, BlockHit: 1},
+			}{X: 450, Y: 519, SpeedX: 0, SpeedY: 1, BlockHit: 1},
 		},
 		{
 			name: "ball hits top of block going down diagonally right",
@@ -290,7 +290,7 @@ func Test_BallPhysicsSystemHittingBlock(t *testing.T) {
 				SpeedX   float32
 				SpeedY   float32
 				BlockHit int
-			}{X: 460, Y: 510, SpeedX: 1, SpeedY: 1, BlockHit: 1},
+			}{X: 460, Y: 519, SpeedX: 1, SpeedY: 1, BlockHit: 1},
 		},
 		{
 			name: "ball hits top of block going down diagonally left",
@@ -312,7 +312,7 @@ func Test_BallPhysicsSystemHittingBlock(t *testing.T) {
 				SpeedX   float32
 				SpeedY   float32
 				BlockHit int
-			}{X: 440, Y: 510, SpeedX: -1, SpeedY: 1, BlockHit: 1},
+			}{X: 440, Y: 519, SpeedX: -1, SpeedY: 1, BlockHit: 1},
 		},
 
 		// up
@@ -329,14 +329,14 @@ func Test_BallPhysicsSystemHittingBlock(t *testing.T) {
 				Y      float32
 				SpeedX float32
 				SpeedY float32
-			}{X: 450, Y: 391, SpeedX: 0, SpeedY: 1},
+			}{X: 450, Y: 389, SpeedX: 0, SpeedY: 1},
 			expected: struct {
 				X        float32
 				Y        float32
 				SpeedX   float32
 				SpeedY   float32
 				BlockHit int
-			}{X: 450, Y: 400, SpeedX: 0, SpeedY: -1, BlockHit: 1},
+			}{X: 450, Y: 381, SpeedX: 0, SpeedY: -1, BlockHit: 1},
 		},
 		{
 			name: "ball hits bottom of block going up diagonally right",
@@ -351,14 +351,14 @@ func Test_BallPhysicsSystemHittingBlock(t *testing.T) {
 				Y      float32
 				SpeedX float32
 				SpeedY float32
-			}{X: 450, Y: 391, SpeedX: 1, SpeedY: 1},
+			}{X: 450, Y: 389, SpeedX: 1, SpeedY: 1},
 			expected: struct {
 				X        float32
 				Y        float32
 				SpeedX   float32
 				SpeedY   float32
 				BlockHit int
-			}{X: 460, Y: 400, SpeedX: 1, SpeedY: -1, BlockHit: 1},
+			}{X: 460, Y: 381, SpeedX: 1, SpeedY: -1, BlockHit: 1},
 		},
 		{
 			name: "ball hits bottom of block going up diagonally left",
@@ -373,14 +373,14 @@ func Test_BallPhysicsSystemHittingBlock(t *testing.T) {
 				Y      float32
 				SpeedX float32
 				SpeedY float32
-			}{X: 450, Y: 391, SpeedX: -1, SpeedY: 1},
+			}{X: 450, Y: 389, SpeedX: -1, SpeedY: 1},
 			expected: struct {
 				X        float32
 				Y        float32
 				SpeedX   float32
 				SpeedY   float32
 				BlockHit int
-			}{X: 440, Y: 400, SpeedX: -1, SpeedY: -1, BlockHit: 1},
+			}{X: 440, Y: 381, SpeedX: -1, SpeedY: -1, BlockHit: 1},
 		},
 	}
 
