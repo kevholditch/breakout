@@ -382,6 +382,142 @@ func Test_BallPhysicsSystemHittingBlock(t *testing.T) {
 				BlockHit int
 			}{X: 440, Y: 381, SpeedX: -1, SpeedY: -1, BlockHit: 1},
 		},
+
+		// right
+		{
+			name: "ball hits left of block going right",
+			block: struct {
+				X      float32
+				Y      float32
+				Width  float32
+				Height float32
+			}{X: 400, Y: 400, Width: 100, Height: 100},
+			ball: struct {
+				X      float32
+				Y      float32
+				SpeedX float32
+				SpeedY float32
+			}{X: 389, Y: 450, SpeedX: 1, SpeedY: 0},
+			expected: struct {
+				X        float32
+				Y        float32
+				SpeedX   float32
+				SpeedY   float32
+				BlockHit int
+			}{X: 381, Y: 450, SpeedX: -1, SpeedY: 0, BlockHit: 1},
+		},
+		{
+			name: "ball hits left of block going right and diagonally up",
+			block: struct {
+				X      float32
+				Y      float32
+				Width  float32
+				Height float32
+			}{X: 400, Y: 400, Width: 100, Height: 100},
+			ball: struct {
+				X      float32
+				Y      float32
+				SpeedX float32
+				SpeedY float32
+			}{X: 389, Y: 450, SpeedX: 1, SpeedY: 1},
+			expected: struct {
+				X        float32
+				Y        float32
+				SpeedX   float32
+				SpeedY   float32
+				BlockHit int
+			}{X: 381, Y: 460, SpeedX: -1, SpeedY: 1, BlockHit: 1},
+		},
+		{
+			name: "ball hits left of block going right and diagonally down",
+			block: struct {
+				X      float32
+				Y      float32
+				Width  float32
+				Height float32
+			}{X: 400, Y: 400, Width: 100, Height: 100},
+			ball: struct {
+				X      float32
+				Y      float32
+				SpeedX float32
+				SpeedY float32
+			}{X: 389, Y: 450, SpeedX: 1, SpeedY: -1},
+			expected: struct {
+				X        float32
+				Y        float32
+				SpeedX   float32
+				SpeedY   float32
+				BlockHit int
+			}{X: 381, Y: 440, SpeedX: -1, SpeedY: -1, BlockHit: 1},
+		},
+
+		// left
+		{
+			name: "ball hits right of block going left",
+			block: struct {
+				X      float32
+				Y      float32
+				Width  float32
+				Height float32
+			}{X: 400, Y: 400, Width: 100, Height: 100},
+			ball: struct {
+				X      float32
+				Y      float32
+				SpeedX float32
+				SpeedY float32
+			}{X: 511, Y: 450, SpeedX: -1, SpeedY: 0},
+			expected: struct {
+				X        float32
+				Y        float32
+				SpeedX   float32
+				SpeedY   float32
+				BlockHit int
+			}{X: 519, Y: 450, SpeedX: 1, SpeedY: 0, BlockHit: 1},
+		},
+		{
+			name: "ball hits right of block going left and diagonally up",
+			block: struct {
+				X      float32
+				Y      float32
+				Width  float32
+				Height float32
+			}{X: 400, Y: 400, Width: 100, Height: 100},
+			ball: struct {
+				X      float32
+				Y      float32
+				SpeedX float32
+				SpeedY float32
+			}{X: 511, Y: 450, SpeedX: -1, SpeedY: 1},
+			expected: struct {
+				X        float32
+				Y        float32
+				SpeedX   float32
+				SpeedY   float32
+				BlockHit int
+			}{X: 519, Y: 460, SpeedX: 1, SpeedY: 1, BlockHit: 1},
+		},
+		{
+			name: "ball hits right of block going left and diagonally down",
+			block: struct {
+				X      float32
+				Y      float32
+				Width  float32
+				Height float32
+			}{X: 400, Y: 400, Width: 100, Height: 100},
+			ball: struct {
+				X      float32
+				Y      float32
+				SpeedX float32
+				SpeedY float32
+			}{X: 511, Y: 450, SpeedX: -1, SpeedY: -1},
+			expected: struct {
+				X        float32
+				Y        float32
+				SpeedX   float32
+				SpeedY   float32
+				BlockHit int
+			}{X: 519, Y: 440, SpeedX: 1, SpeedY: -1, BlockHit: 1},
+		},
 	}
 
 	for _, tc := range testCases {
