@@ -61,7 +61,7 @@ func Test_BallPhysicsSystemScreenBoundaries(t *testing.T) {
 				components.NewPositionedComponent(100, 40),
 				components.NewDimensionsComponent(1, 1),
 				NewPlayingSpace(800, 600),
-				NewLevelSystem(),
+				NewLevelSystem(NewPlayingSpace(800, 600)),
 				NewGameState())
 			system.New(&ecs.World{})
 
@@ -199,7 +199,7 @@ func Test_BallPhysicsSystemHittingPlayer(t *testing.T) {
 				components.NewPositionedComponent(tc.player.X, tc.player.Y),
 				components.NewDimensionsComponent(tc.player.Width, tc.player.Height),
 				NewPlayingSpace(800, 600),
-				NewLevelSystem(),
+				NewLevelSystem(NewPlayingSpace(800, 600)),
 				NewGameState())
 			system.New(&ecs.World{})
 
@@ -522,7 +522,7 @@ func Test_BallPhysicsSystemHittingBlock(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			levelSystem := NewLevelSystem()
+			levelSystem := NewLevelSystem(NewPlayingSpace(800, 600))
 			levelSystem.Add(components.NewEntityBuilder().
 				WithPosition(tc.block.X, tc.block.Y).
 				WithDimensions(tc.block.Width, tc.block.Height).

@@ -46,12 +46,6 @@ func Run() error {
 	world.AddEntity(player)
 	world.AddEntity(ball)
 
-	levelFactory := NewLevelFactory(playingSpace)
-	blocks := levelFactory.NewLevel()
-	for _, block := range blocks {
-		world.AddEntity(block)
-	}
-
 	gameState := NewGameState()
 
 	world.AddSystem(NewQuadRenderSystem(NewWindowSize(width, height)))
@@ -59,7 +53,7 @@ func Run() error {
 	world.AddSystem(NewLateralMovementSystem(playingSpace))
 	world.AddSystem(NewPlayerInputSystem(w.OnKeyPress, gameState))
 
-	levelSystem := NewLevelSystem()
+	levelSystem := NewLevelSystem(playingSpace)
 	world.AddSystem(levelSystem)
 
 	world.AddSystem(NewBallPhysicsSystem(
