@@ -34,23 +34,14 @@ func Run() error {
 		Title:        fmt.Sprintf("Breakout %s- Kevin Holditch", version),
 		SwapInterval: 1,
 	})
-
 	if err != nil {
 		return err
 	}
 
-	barHeight := 50
-
 	world := ecs.NewWorld()
 	player := NewPlayer()
 	ball := NewBall()
-	//hud := NewHud(barHeight, WindowDimensions{
-	//	Width:  width,
-	//	Height: height,
-	//})
-	//
-	playingSpace := NewPlayingSpace(width, height-barHeight)
-	//world.AddSystem(NewFrameRateSystem())
+	playingSpace := NewPlayingSpace(width, height)
 
 	world.AddEntity(player)
 	world.AddEntity(ball)
